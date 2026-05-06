@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import "./login.css";
+import "./Login.css";
 import Home from "../Home/Home";
 import Register from "../Register/Register";
 import edge_prologo from "../../assets/edge_prologo.png";

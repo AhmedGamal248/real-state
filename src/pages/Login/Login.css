@@ -6,8 +6,9 @@
 }
 
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     direction: rtl;
+    background: #0f172a; /* لون احتياطي */
 }
 
 /* Login Page */
@@ -18,35 +19,36 @@ body {
     align-items: center;
     position: relative;
     overflow: hidden;
-    background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+    background: radial-gradient(circle at center, #1e293b 0%, #0f172a 100%);
 }
 
 .login-container {
     width: 100%;
-    max-width: 550px;
+    max-width: 450px; /* تقليل العرض قليلاً ليكون أكثر أناقة */
     padding: 20px;
 }
 
 .login-card {
+    height: 96vh;
     position: relative;
     z-index: 10;
-    background: rgba(255, 255, 255, 0.08);
-    backdrop-filter: blur(70px);
-    padding: 45px 35px;
-    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.05); /* تقليل التعتيم لزيادة الشفافية */
+    backdrop-filter: blur(15px); /* تنعيم الخلفية */
+    -webkit-backdrop-filter: blur(15px);
+    padding: 40px;
+    border-radius: 24px;
     border: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
     color: #fff;
     text-align: center;
-    animation: slideIn 0.5s ease-out;
+    animation: slideIn 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @keyframes slideIn {
     from {
         opacity: 0;
-        transform: translateY(-30px);
+        transform: translateY(20px);
     }
-
     to {
         opacity: 1;
         transform: translateY(0);
@@ -54,130 +56,125 @@ body {
 }
 
 /* Logo Section */
-/* .logo-section {
-    margin-bottom: 30px;
-} */
-
-/* .logo {
+.logoImages {
     display: flex;
-    flex-direction: column;
+    flex-wrap: nowrap;
     align-items: center;
-    margin-bottom: 15px;
-} */
+    flex-direction: row-reverse; /* جعل الشعار فوق النص أفضل بصرياً */
+    gap: 15px;
+    margin-bottom: 25px;
+}
 
 .logo-image {
-    width: 40%;
-    height: 60px;
-    margin-bottom: 10px;
-    border-radius: 10%;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-    border: 2px solid rgba(255, 255, 255, 0.2);
-    transition: transform 0.3s ease;
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 16px;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    transition: transform 0.4s ease;
+}
+
+.edge-logo{
+    width: 250vh;
 }
 
 .logo-image:hover {
-    transform: scale(1.05);
+    transform: rotate(5deg) scale(1.1);
 }
 
-.logoTitle h1{
-    font-size: 40px;
-    font-weight: bold;
-    color: #0f172ae3;
+.logoTitle h1 {
+    font-size: 23spx;
+    font-weight: 800;
+    color: #f8fafc; /* لون فاتح ليتناسب مع الخلفية المظلمة */
     margin: 0;
-    text-shadow: -4px 7px 15px #a7c8ff;
+    letter-spacing: -0.5px;
 }
-/* .logoImages {
-    display: flex;
-} */
+
 .subtitle {
-    font-size: 16px;
-    color: rgba(255, 255, 255, 0.8);
-    line-height: 1.5;
-    margin: 0;
-    font-weight: bold;
+    font-size: 14px;
+    color: #94a3b8;
+    margin-top: 8px;
+    font-weight: 400;
 }
 
 /* Form Styles */
 .login-form {
-    margin-bottom: 20px;
+    margin-top: 30px;
 }
 
 .input-group {
-    margin-bottom: 20px;
+    margin-bottom: 22px;
     text-align: right;
 }
 
 .input-group label {
     display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
-    color: rgba(255, 255, 255, 0.9);
-    font-size: 18px;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #e2e8f0;
+    font-size: 15px;
 }
 
 .input-group input {
     width: 100%;
-    padding: 5px 5px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 10px;
-    font-size: 16px;
-    transition: all 0.3s ease;
-    background: rgba(255, 255, 255, 0.1);
+    padding: 14px 16px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    font-size: 15px;
+    transition: all 0.2s ease;
+    background: rgba(15, 23, 42, 0.5); /* خلفية داكنة للإدخال */
     color: #fff;
-    backdrop-filter: blur(10px);
+    outline: none;
 }
 
 .input-group input:focus {
-    outline: none;
-    border-color: rgba(255, 255, 255, 0.5);
-    background: rgba(255, 255, 255, 0.15);
-    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
-}
-
-.input-group input::placeholder {
-    color: rgba(255, 255, 255, 0.6);
+    border-color: #3b82f6;
+    background: rgba(15, 23, 42, 0.8);
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
 }
 
 /* Form Options */
 .form-options {
-    text-align: left;
-    margin-bottom: 20px;
+    display: flex;
+    justify-content: flex-start;
+    margin-bottom: 25px;
 }
 
 .forgot-password {
-    color: rgba(255, 255, 255, 0.8);
+    color: #3b82f6;
     text-decoration: none;
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 500;
-    transition: color 0.3s ease;
+    transition: color 0.2s;
 }
 
 .forgot-password:hover {
-    color: #fff;
+    color: #60a5fa;
     text-decoration: underline;
 }
 
 /* Login Button */
 .login-btn {
     width: 100%;
-    padding: 14px;
+    padding: 15px;
     border: none;
-    border-radius: 10px;
-    background: #0f172a;
-    box-shadow: -1px 6px 20px 0px rgba(59, 130, 246, 0.4);
+    border-radius: 12px;
+    background: #3b82f6;
     color: white;
     font-size: 16px;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.3s ease;
-    backdrop-filter: blur(10px);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
 .login-btn:hover {
-    background: rgb(59 130 246 / 36%);
+    background: #2563eb;
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+    box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.4);
 }
+
 .login-btn:active {
     transform: translateY(0);
 }
@@ -185,52 +182,37 @@ body {
 /* Register Section */
 .register-section {
     border-top: 1px solid rgba(255, 255, 255, 0.1);
-    padding-top: 20px;
-    margin-top: 20px;
+    padding-top: 25px;
+    margin-top: 25px;
 }
 
 .register-section p {
     font-size: 14px;
-    color: rgba(255, 255, 255, 0.7);
-    margin: 0;
+    color: #94a3b8;
 }
 
 .register-link {
-    color: #60a5fa;
+    color: #3b82f6;
     text-decoration: none;
     font-weight: 600;
-    transition: color 0.3s ease;
+    margin-right: 5px;
 }
 
 .register-link:hover {
-    color: #93c5fd;
-    text-decoration: underline;
-}
-.logoImages {
-    display: flex;
-    align-items: center;
-    flex-direction: row-reverse;
-    flex-wrap: wrap;
-    width: 20vh;
-    align-content: center;
-    justify-content: space-around;
+    color: #60a5fa;
 }
 
 /* Responsive Design */
 @media (max-width: 480px) {
     .login-container {
-        padding: 10px;
+        padding: 15px;
     }
 
     .login-card {
-        padding: 30px 20px;
+        padding: 30px 24px;
     }
 
-    .logo h1 {
-        font-size: 20px;
-    }
-
-    .subtitle {
-        font-size: 13px;
+    .logoTitle h1 {
+        font-size: 22px;
     }
 }

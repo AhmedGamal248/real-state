@@ -6,6 +6,7 @@ import videoBg from "../../assets/videoBg.mp4";
 import FinanceMap from "../FinanceMap/FinanceMap";
 import { useState, useEffect, useRef } from "react";
 import RequestForm from "../RequestForm/RequestForm";
+import { Link } from "react-router";
 // import LeadsDemo from "../../components/LeadModal/LeadModal";
 
 const services = [
@@ -14,6 +15,7 @@ const services = [
     title: "التمويل العقاري",
     desc: "احصل على أفضل عروض التمويل من كبرى البنوك المصرية بضغطة واحدة",
     color: "#0ea5e9",
+    to:'dashboard'
   },
   // {
   //   icon: "⚖️",
@@ -155,12 +157,13 @@ export default function Home() {
       <section className="services-section" id="services-section">
         <div className="section-header">
           <span className="section-tag">خدماتنا</span>
-          <h2 className="section-title">كل ما تحتاجه في مكان واحد</h2>
+          <h2 className="section-tag">كل ما تحتاجه في مكان واحد</h2>
           <p className="section-desc">
             نقدم لك مجموعة متكاملة من الخدمات العقارية الرقمية لتوفير وقتك وجهدك
           </p>
         </div>
         <div className="services-grid">
+          
           {services.map((s) => (
             <div className="service-card" key={s.title}>
               <div className="service-icon-wrap" style={{ background: `${s.color}18`, border: `1.5px solid ${s.color}40` }}>
@@ -168,9 +171,11 @@ export default function Home() {
               </div>
               <h3 className="service-title">{s.title}</h3>
               <p className="service-desc">{s.desc}</p>
+              <Link to='/dashboard'>
               <button className="service-btn" style={{ color: s.color }}>
                 استعرض التفاصيل ←
               </button>
+              </Link>
             </div>
           ))}
         </div>
@@ -180,7 +185,7 @@ export default function Home() {
       <section className="tabs-section" id="tabs-section">
         <div className="section-header">
           <span className="section-tag">الخدمات التفاعلية</span>
-          <h2 className="section-title">ابدأ الآن مع خدماتنا</h2>
+          <h2 className="section-tag">ابدأ الآن مع خدماتنا</h2>
         </div>
         <div className="tabs-container">
           <div className="tabs-bar">
@@ -350,7 +355,7 @@ export default function Home() {
 
           {/* Iframe */}
           <iframe
-            src="http://10.1.1.116:5000/"
+            src="https://chat-put-2che.vercel.app/"
             title="chatbot"
             className="chat-iframe"
           />

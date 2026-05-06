@@ -1,5 +1,6 @@
 import "./Navbar.css";
 import profile_person_girl from "../../assets/profile_person_girl.png";
+import { Link } from "react-router";
 
 export default function Navbar() {
     return (
@@ -17,7 +18,7 @@ export default function Navbar() {
             <nav className="nav-center">
                 <a className="nav-item" href="#home">الرئيسية</a>
                 <a className="nav-item" href="#services-section">الخدمات</a>
-                <a className="nav-item" href="#reports">التقارير</a>
+                <Link className="nav-item" to="dashboard">لوحة التحكم</Link>
                 <a className="nav-item" href="#faq">الأسئلة الشائعة</a>
                 <a className="nav-item" href="#contact">تواصل معنا</a>
             </nav>
