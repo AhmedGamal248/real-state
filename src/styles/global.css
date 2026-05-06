@@ -1,0 +1,56 @@
+:root {
+  font-family: "Plus Jakarta Sans", "Segoe UI", sans-serif;
+  color: #16324f;
+  background:
+    radial-gradient(circle at top, rgba(173, 215, 255, 0.32), transparent 34%),
+    linear-gradient(180deg, #f6fbff 0%, #eef4f8 45%, #f7fafc 100%);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  min-width: 320px;
+  background:
+    radial-gradient(circle at top, rgba(173, 215, 255, 0.32), transparent 34%),
+    linear-gradient(180deg, #f6fbff 0%, #eef4f8 45%, #f7fafc 100%);
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(76, 113, 154, 0.4);
+  border-radius: 999px;
+}

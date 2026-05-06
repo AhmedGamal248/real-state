@@ -1,0 +1,147 @@
+﻿.navbar {
+  height: 80px;
+  background: linear-gradient(135deg, #0c2340 0%, #112e56 55%, #1f3f6d 100%);
+  color: #f8fafc;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 28px;
+  gap: 18px;
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.16);
+}
+
+.nav-left,
+.nav-center,
+.nav-right {
+  display: flex;
+  align-items: center;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.brand-icon {
+  width: 46px;
+  height: 46px;
+  display: grid;
+  place-items: center;
+  font-size: 22px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+}
+
+.brand-text h1 {
+  margin: 0;
+  font-size: 1.1rem;
+  letter-spacing: 0.02em;
+}
+
+.brand-text p {
+  margin: 4px 0 0;
+  color: #cbd5e1;
+  font-size: 0.85rem;
+}
+
+.nav-center {
+  gap: 24px;
+  flex: 1;
+  justify-content: center;
+}
+
+.nav-item {
+    color: rgba(248, 250, 252, 0.88);
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 18px;
+    padding: 10px 0;
+    position: relative;
+    transition: color 0.25s ease, transform 0.25s ease;
+}
+
+.nav-item:hover,
+.nav-item:focus {
+  color: #93c5fd;
+  transform: translateY(-1px);
+}
+
+.nav-item::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -4px;
+  width: 0;
+  height: 2px;
+  background: #93c5fd;
+  transition: width 0.25s ease;
+}
+
+.nav-item:hover::after,
+.nav-item:focus::after {
+  width: 100%;
+}
+
+.nav-right {
+  justify-content: flex-end;
+}
+
+.user-profile {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  padding: 10px 14px;
+  border-radius: 18px;
+}
+
+.user-avatar {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #fff;
+}
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.user-name {
+  font-weight: 700;
+  color: #f8fafc;
+}
+
+.user-role {
+  font-size: 0.8rem;
+  color: #cbd5e1;
+}
+
+@media (max-width: 980px) {
+  .nav-center {
+    display: none;
+  }
+}
+
+@media (max-width: 680px) {
+  .navbar {
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 18px 20px;
+    height: auto;
+  }
+
+  .nav-left,
+  .nav-right {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .brand-text h1 {
+    font-size: 1rem;
+  }
+}
