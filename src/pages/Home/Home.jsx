@@ -7,6 +7,7 @@ import videoBg from "../../assets/videoBg.mp4";
 import FinanceMap from "../FinanceMap/FinanceMap";
 import RequestForm from "../RequestForm/RequestForm";
 import "./Home.css";
+import hedearPhoto from "../../assets/Gemini_Generated_Image_16whiz16whiz16wh.png"
 
 const services = [
   {
@@ -89,9 +90,14 @@ export default function Home() {
       <Navbar />
 
       <section className="hero home-hero" dir="rtl">
-        <video autoPlay muted loop playsInline className="bg-video">
+        {/* <video autoPlay muted loop playsInline className="bg-video">
           <source src={videoBg} type="video/mp4" />
-        </video>
+        </video> */}
+        <img
+            src={hedearPhoto}
+            alt="EDGE PRO logo"
+            className="bg-video"
+          />
         <div className="heroShadow" />
         <div className="hero-overlay" />
         <div className="hero-particles">

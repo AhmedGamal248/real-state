@@ -69,8 +69,8 @@
   object-fit: cover;
   pointer-events: none;
   z-index: 1;
-  will-change: transform;
-  transform: translateZ(0);
+  /* will-change: transform;
+  transform: translateZ(0); */
 }
 
 .heroShadow {
@@ -215,8 +215,8 @@
 }
 
 .hero-title {
-  font-size: clamp(44px, 5vw, 58px);
-  font-weight: 900;
+  font-size: clamp(44px, 3vw, 58px);
+  font-weight: 700;
   line-height: 1.06;
   margin: 0 0 24px;
   letter-spacing: -0.03em;
