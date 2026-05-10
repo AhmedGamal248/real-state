@@ -1,17 +1,16 @@
 import { useEffect, useRef, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import edgeProLogo from "../../assets/edge_prologo.png";
+import bankMarkzyLogo from "../../assets/bank_markzy.png";
+import { setAuthenticated } from "../../utils/auth";
 import "./Login.css";
-import Home from "../Home/Home";
-import Register from "../Register/Register";
-import edge_prologo from "../../assets/edge_prologo.png";
-import bank_markzylogo from "../../assets/bank_markzy.png";
 
 export default function Login() {
-  const [isLogged, setIsLogged] = useState(false);
-  const [showRegister, setShowRegister] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const vantaRef = useRef(null);
   const effectRef = useRef(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (window.VANTA) {
@@ -32,41 +31,36 @@ export default function Login() {
     }
 
     return () => {
-      if (effectRef.current) effectRef.current.destroy();
+      if (effectRef.current) {
+        effectRef.current.destroy();
+      }
     };
   }, []);
 
   const handleLogin = () => {
-    if (username && password) {
-      setIsLogged(true);
-    } else {
+    if (!username || !password) {
       alert("يرجى إدخال اسم المستخدم وكلمة المرور");
+      return;
     }
+
+    setAuthenticated(true);
+    navigate("/");
   };
-
-  if (isLogged) return <Home />;
-
-  // ── عرض صفحة التسجيل ──
-  if (showRegister) {
-    return <Register onBackToLogin={() => setShowRegister(false)} />;
-  }
 
   return (
     <div className="login-page" ref={vantaRef}>
       <div className="login-container">
         <div className="login-card">
           <div className="logo-section">
-              <div className="logoImages">
-                <div className="edge-logo">
-                  <img src={edge_prologo} alt="Edge Pro Logo" />
-                </div>
-                <div className="bank-markzylogo">
-                  <img
-                    src={bank_markzylogo}
-                    alt="Real Estate Platform Logo"
-                  />
-                </div>
+            <div className="logoImages">
+              <div className="edge-logo">
+                <img src={edgeProLogo} alt="Edge Pro Logo" />
               </div>
+              <div className="bank-markzylogo">
+                <img src={bankMarkzyLogo} alt="Real Estate Platform Logo" />
+              </div>
+            </div>
+
             <div className="logoTitle">
               <h1>Real Estate Platform</h1>
             </div>
@@ -78,8 +72,8 @@ export default function Login() {
 
           <form
             className="login-form"
-            onSubmit={(e) => {
-              e.preventDefault();
+            onSubmit={(event) => {
+              event.preventDefault();
               handleLogin();
             }}
           >
@@ -90,7 +84,7 @@ export default function Login() {
                 id="username"
                 placeholder="أدخل اسم المستخدم"
                 value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                onChange={(event) => setUsername(event.target.value)}
                 required
               />
             </div>
@@ -102,7 +96,7 @@ export default function Login() {
                 id="password"
                 placeholder="أدخل كلمة المرور"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(event) => setPassword(event.target.value)}
                 required
               />
             </div>
@@ -121,19 +115,9 @@ export default function Login() {
           <div className="register-section">
             <p>
               ليس لديك حساب؟{" "}
-              <button
-                className="register-link"
-                style={{
-                  background: "none",
-                  border: "none",
-                  cursor: "pointer",
-                  padding: 0,
-                  font: "inherit",
-                }}
-                onClick={() => setShowRegister(true)}
-              >
+              <Link className="register-link" to="/register">
                 سجل مستخدم جديد
-              </button>
+              </Link>
             </p>
           </div>
         </div>

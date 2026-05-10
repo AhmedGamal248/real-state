@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import Sidebar from './Sidebar.jsx';
 import DashboardHome from './DashboardHome.jsx';
 import './Dashboard.css'
@@ -7,6 +7,8 @@ import {
   initialMortgageRequests,
   initialClients,
 } from './mockData.js';
+import Map from './Map.jsx';
+import Leads from './Leads.jsx';
 
 
 const PAGE_LABELS = {
@@ -20,8 +22,7 @@ const PAGE_LABELS = {
 
 export default function Dashbord() {
     const [activePage, setActivePage] = useState('dashboard');
-    const [units, setUnits] = useState(initialUnits);
-    const [showAddUnit, setShowAddUnit] = useState(false);
+    const [units] = useState(initialUnits);
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   
     useEffect(() => {
@@ -68,18 +69,14 @@ export default function Dashbord() {
       };
     }, [isSidebarOpen]);
   
-    const handleAddUnit = (unit) => {
-      setUnits((prev) => [...prev, unit]);
-    };
-  
     const handleNavigate = (page) => {
       setActivePage(page);
       setIsSidebarOpen(false);
     };
   
     const handleOpenAddUnit = () => {
+      setActivePage('units');
       setIsSidebarOpen(false);
-      setShowAddUnit(true);
     };
   
     const renderPage = () => {
@@ -144,6 +141,19 @@ export default function Dashbord() {
               </div>
             </div>
           );
+
+          case 'leads':
+            return (
+              <Leads/>
+            );
+          case 'mortgage':
+            return (
+              <></>
+            );
+          case 'map':
+            return (
+              <Map/>
+            );
   
         default:
           return <div className="page-wip">هذه الصفحة قيد التطوير...</div>;

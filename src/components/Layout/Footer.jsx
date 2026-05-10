@@ -5,7 +5,7 @@ export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="footer">
+    <footer className="footer" id="Footer">
       <div className="footer-container">
 
         <div className="footer-top">
@@ -53,15 +53,7 @@ export default function Footer() {
             </ul>
           </div>
 
-          <div className="footer-links-group">
-            <h4 className="footer-group-title">روابط سريعة</h4>
-            <ul className="footer-links">
-              <li><a href="#">الرئيسية</a></li>
-              <li><a href="#">من نحن</a></li>
-              <li><a href="#">الأسئلة الشائعة</a></li>
-              <li><a href="#">تواصل معنا</a></li>
-            </ul>
-          </div>
+        
 
           <div className="footer-links-group">
             <h4 className="footer-group-title">تواصل معنا</h4>

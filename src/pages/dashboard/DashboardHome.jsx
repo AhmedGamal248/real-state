@@ -1,33 +1,24 @@
-import React from 'react';
-import { initialMortgageRequests } from './mockData.js';
+import FinanceMap from "../FinanceMap/FinanceMap.jsx";
 
 const STATUS_CLASS = {
-  متاح: 'badge--available',
-  مباع: 'badge--sold',
-  معلق: 'badge--pending',
-  محجوز: 'badge--reserved',
-  'موافق عليه': 'badge--approved',
-  مرفوض: 'badge--rejected',
-  'قيد المراجعة': 'badge--reviewing',
-  'عميل نشط': 'badge--active',
-  مكتمل: 'badge--completed',
-  'في المفاوضات': 'badge--negotiating',
+  متاح: "badge--available",
+  مباع: "badge--sold",
+  معلق: "badge--pending",
+  محجوز: "badge--reserved",
+  "موافق عليه": "badge--approved",
+  مرفوض: "badge--rejected",
+  "قيد المراجعة": "badge--reviewing",
+  "عميل نشط": "badge--active",
+  مكتمل: "badge--completed",
+  "في المفاوضات": "badge--negotiating",
 };
 
-const MONTHS = ['نوفمبر', 'ديسمبر', 'يناير', 'فبراير', 'مارس', 'أبريل'];
+const MONTHS = ["نوفمبر", "ديسمبر", "يناير", "فبراير", "مارس", "أبريل"];
 const BARS = [45, 60, 38, 72, 55, 80];
-const VALUES = ['4.5M', '6.1M', '3.8M', '7.2M', '5.5M', '8.1M'];
-
-const MAP_DOTS = [
-  { top: '30%', left: '15%', color: '#185FA5' },
-  { top: '55%', left: '25%', color: '#639922' },
-  { top: '20%', left: '65%', color: '#BA7517' },
-  { top: '70%', left: '60%', color: '#185FA5' },
-  { top: '45%', left: '75%', color: '#639922' },
-];
+const VALUES = ["4.5M", "6.1M", "3.8M", "7.2M", "5.5M", "8.1M"];
 
 const Badge = ({ label }) => {
-  const mod = STATUS_CLASS[label] ?? 'badge--default';
+  const mod = STATUS_CLASS[label] ?? "badge--default";
   return <span className={`badge ${mod}`}>{label}</span>;
 };
 
@@ -39,39 +30,30 @@ const StatCard = ({ label, value, badge, badgeType }) => (
   </div>
 );
 
-
-// export to CSV
 function exportToCSV(data) {
-  if (!data || !data.length) return;
+  if (!data?.length) {
+    return;
+  }
 
-  // headers
   const headers = Object.keys(data[0]);
+  const rows = data.map((row) =>
+    headers
+      .map((field) => {
+        let value = row[field];
 
-  // convert rows
-  const rows = data.map(row =>
-    headers.map(field => {
-      let value = row[field];
+        if (value instanceof Date) {
+          value = value.toLocaleDateString("ar-EG");
+        }
 
-      // لو تاريخ نحوله string مفهوم
-      if (value instanceof Date) {
-        value = value.toLocaleDateString("ar-EG");
-      }
-
-      // نحول لأي string
-      value = String(value ?? "");
-
-      // نحط quotes عشان نحمي الكوما والعربي
-      value = `"${value.replace(/"/g, '""')}"`;
-
-      return value;
-    }).join(",")
+        value = String(value ?? "");
+        return `"${value.replace(/"/g, '""')}"`;
+      })
+      .join(",")
   );
 
   const csvContent = [headers.join(","), ...rows].join("\n");
-
-  // BOM مهم عشان العربي يطلع صح في Excel
   const blob = new Blob(["\uFEFF" + csvContent], {
-    type: "text/csv;charset=utf-8;"
+    type: "text/csv;charset=utf-8;",
   });
 
   const link = document.createElement("a");
@@ -86,37 +68,55 @@ export default function DashboardHome({
   clients,
   onAddUnit,
 }) {
-  const soldUnits = units.filter((unit) => unit.status === 'مباع');
+  const soldUnits = units.filter((unit) => unit.status === "مباع");
+  const availableUnits = units.filter((unit) => unit.status === "متاح").length;
   const activeRequests = mortgageRequests.filter(
-    (request) => request.status === 'قيد المراجعة'
+    (request) => request.status === "قيد المراجعة"
+  ).length;
+  const approvedRequests = mortgageRequests.filter(
+    (request) => request.status === "موافق عليه"
   ).length;
   const revenue = soldUnits.reduce((sum, unit) => sum + unit.price, 0);
+  const averageUnitPrice = units.length
+    ? Math.round(units.reduce((sum, unit) => sum + unit.price, 0) / units.length)
+    : 0;
+  const approvalRate = mortgageRequests.length
+    ? Math.round((approvedRequests / mortgageRequests.length) * 100)
+    : 0;
   const revenueLabel =
     revenue >= 1_000_000
       ? `${(revenue / 1_000_000).toFixed(1)}M`
-      : revenue.toLocaleString();
+      : revenue.toLocaleString("ar-EG");
+  const averageUnitLabel =
+    averageUnitPrice >= 1_000_000
+      ? `${(averageUnitPrice / 1_000_000).toFixed(2)}M`
+      : averageUnitPrice.toLocaleString("ar-EG");
 
   return (
     <div className="dashboard">
-      {/* <section className="dashboard-hero">
-        <div className="dashboard-hero-copy">
-          <p className="dashboard-eyebrow">نظرة عامة</p>
-          <h1 className="dashboard-title">لوحة التحكم العقارية</h1>
-          <p className="dashboard-subtitle">
-            تابع الوحدات والمبيعات وطلبات التمويل من شاشة واحدة على أي جهاز.
-          </p>
+ 
+
+      <div className="dashboard-insights">
+        <div className="dashboard-insight-card">
+          <span className="dashboard-insight-label">وحدات متاحة الآن</span>
+          <strong className="dashboard-insight-value">{availableUnits}</strong>
+          <p className="dashboard-insight-note">جاهزة للعرض والمتابعة المباشرة</p>
         </div>
 
-        {onAddUnit && (
-          <button
-            type="button"
-            className="primary-btn dashboard-hero-action"
-            onClick={onAddUnit}
-          >
-            + إضافة وحدة
-          </button>
-        )}
-      </section> */}
+        <div className="dashboard-insight-card">
+          <span className="dashboard-insight-label">متوسط سعر الوحدة</span>
+          <strong className="dashboard-insight-value">
+            {averageUnitLabel} ج.م
+          </strong>
+          <p className="dashboard-insight-note">قراءة سريعة لمستوى التسعير الحالي</p>
+        </div>
+
+        <div className="dashboard-insight-card">
+          <span className="dashboard-insight-label">نسبة الموافقات</span>
+          <strong className="dashboard-insight-value">{approvalRate}%</strong>
+          <p className="dashboard-insight-note">من إجمالي طلبات التمويل المسجلة</p>
+        </div>
+      </div>
 
       <div className="stats-grid">
         <StatCard
@@ -145,39 +145,23 @@ export default function DashboardHome({
         />
       </div>
 
-      <div className="dashboard-two-col">
-        <div className="card">
+      <div className="dashboard-two-col dashboard-two-col--feature">
+        {/* <div className="card dashboard-map-card">
           <div className="map-header">
-            <span className="card-title">مواقع الوحدات</span>
-            <span className="map-link">عرض الخريطة الكاملة ←</span>
-          </div>
-
-          <div className="map-placeholder">
-            {MAP_DOTS.map((dot, index) => (
-              <div
-                key={index}
-                className="map-dot"
-                style={{ top: dot.top, left: dot.left, background: dot.color }}
-              />
-            ))}
-
-            <div className="map-legend">
-              {[
-                { color: '#185FA5', label: 'متاح' },
-                { color: '#639922', label: 'مباع' },
-                { color: '#BA7517', label: 'معلق' },
-              ].map(({ color, label }) => (
-                <div key={label} className="map-legend-item">
-                  <div
-                    className="map-legend-dot"
-                    style={{ background: color }}
-                  />
-                  {label}
-                </div>
-              ))}
+            <div>
+              <span className="section-chip">خريطة تفاعلية</span>
+              <div className="card-title">مواقع الوحدات</div>
+              <p className="map-subtitle">
+                فلترة أسرع مع عرض مباشر للنتائج داخل اللوحة.
+              </p>
             </div>
+            <span className="map-link">تحديث مباشر</span>
           </div>
-        </div>
+
+          <div className="map-shell">
+            <FinanceMap />
+          </div>
+        </div> */}
 
         <div className="card">
           <div className="card-title">مبيعات الأشهر الستة</div>
@@ -199,12 +183,8 @@ export default function DashboardHome({
       </div>
 
       <div className="dashboard-two-col">
-        
         <div className="card">
-          
-          
           <div className="card-title">أحدث الوحدات</div>
-          
           <div className="list-rows">
             {[...units].reverse().slice(0, 4).map((unit) => (
               <div key={unit.id} className="unit-row">
@@ -255,7 +235,7 @@ export default function DashboardHome({
             <div
               key={client.id}
               className={`client-row${
-                index < clients.length - 1 ? ' client-row--bordered' : ''
+                index < clients.length - 1 ? " client-row--bordered" : ""
               }`}
             >
               <div className="client-avatar">{client.name.slice(0, 2)}</div>
@@ -269,10 +249,6 @@ export default function DashboardHome({
             </div>
           ))}
         </div>
-      </div>
-
-      <div className='export-data'>
-          <button onClick={() => exportToCSV(initialMortgageRequests)} className='export-data-btn' >Export CSV</button>
       </div>
     </div>
   );

@@ -466,6 +466,9 @@ export default function FinanceMap() {
   const [showAreaPanel, setShowAreaPanel] = useState(false);
   const areaSliderTrackRef = useRef(null);
 
+  // Mobile collapse – open by default on desktop, closed on mobile
+  const [filtersOpen, setFiltersOpen] = useState(() => window.innerWidth > 700);
+
   const mapRef = useRef(null);
   const clearDrawRef = useRef(null);
   const popupRef = useRef(null);
@@ -740,6 +743,10 @@ export default function FinanceMap() {
 
   const pricePreviewCount = properties.filter((p) => p.price >= priceMin && p.price <= priceMax).length;
   const areaPreviewCount  = properties.filter((p) => !p.area || (p.area >= areaMin && p.area <= areaMax)).length;
+  const displayedResultsCount = allDisplayed.length;
+  const locationSummary = gov === "ALL"
+    ? "جميع المحافظات"
+    : [area, center, gov].filter(Boolean).join(" / ") || "ابحث حسب الموقع والسعر والمساحة";
 
   return (
     <div className="finance-page" ref={mapRef}>
@@ -752,7 +759,48 @@ export default function FinanceMap() {
       </button>
 
       {/* ══ Filters Bar ══ */}
-      <div className="filters">
+      <div className={`filters${filtersOpen ? " filters--open" : " filters--closed"}`}>
+
+        {/* ── Collapsible header (always visible) ── */}
+        <div className="filters-top" onClick={() => setFiltersOpen((v) => !v)} style={{ cursor: "pointer" }}>
+          <div className="filters-heading">
+            <span className="filters-kicker">لوحة البحث الذكية</span>
+            <strong className="filters-title">اختيار أسرع للعقار المناسب</strong>
+            <p className="filters-summary" onClick={(e) => e.stopPropagation()}>{locationSummary}</p>
+          </div>
+
+          <div className="filters-top-end">
+            {/* Toggle chevron */}
+            <button
+              className="filters-toggle-btn"
+              onClick={(e) => { e.stopPropagation(); setFiltersOpen((v) => !v); }}
+              aria-label={filtersOpen ? "إخفاء الفلاتر" : "عرض الفلاتر"}
+            >
+              <svg
+                className={`filters-toggle-chevron${filtersOpen ? " filters-toggle-chevron--open" : ""}`}
+                viewBox="0 0 10 6" fill="none" width="14" height="14"
+              >
+                <path d="M1 1l4 4 4-4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
+              </svg>
+            </button>
+            <div className="filters-status">
+              <div className="filters-status-chip">
+                <span className="filters-status-value">{displayedResultsCount}</span>
+                <span className="filters-status-label">نتيجة ظاهرة</span>
+              </div>
+              <div className="filters-status-chip">
+                <span className="filters-status-value">{activeFiltersCount}</span>
+                <span className="filters-status-label">فلتر نشط</span>
+              </div>
+            </div>
+
+            
+          </div>
+        </div>
+
+        {/* ── Collapsible body ── */}
+        <div className="filters-body">
+        <div className="filters-toolbar">
 
         {/* Brand chip */}
         <div className="filter-brand">
@@ -880,7 +928,7 @@ export default function FinanceMap() {
               <span className="fp-pill-icon">🧭</span>
               <span className="fp-pill-label">موقعي</span>
             </button>
-            <button className={`fp-pill-btn fp-geo-btn${drawMode ? " fp-pill-draw" : ""}`} onClick={handleDrawBtnClick}>
+            <button className={`fp-pill-btn fp-geo-btn${drawMode ? " fp-pill-draw" : ""}`} onClick={handleDrawBtnClick} title={drawBtnText} aria-label={drawBtnText}>
               <span className="fp-pill-icon">{drawMode ? "❌" : "🟦"}</span>
               <span className="fp-pill-label">{drawMode ? "إلغاء" : "استعلام"}</span>
             </button>
@@ -909,6 +957,8 @@ export default function FinanceMap() {
           {activeFiltersCount > 0 && <span className="fp-reset-badge">{activeFiltersCount}</span>}
         </button>
 
+        </div>
+        </div>{/* end filters-body */}
       </div>
 
       {/* Results popup - يظهر عند وجود نتائج أو عند رسم polygon فارضة */}

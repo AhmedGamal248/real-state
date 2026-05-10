@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import "./Register.css";
-import Login from "../Login/Login";
 
 // ─── Field config per account type ───────────────────────────────────────────
 
@@ -375,7 +374,6 @@ export default function Register() {
   const vantaRef = useRef(null);
   const effectRef = useRef(null);
   const navigate = useNavigate();
-  const [backToLogin, setBackToLogin] = useState(false);
 
   useEffect(() => {
     if (window.VANTA) {
@@ -429,9 +427,6 @@ export default function Register() {
   };
 
   const config = selectedType ? TYPE_CONFIG[selectedType] : null;
-  if (backToLogin) {
-    return <Login onBackToLogin={() => setBackToLogin(false)} />;
-  }
   return (
     <div className="register-page" ref={vantaRef}>
       <div className="register-container">
@@ -470,7 +465,7 @@ export default function Register() {
                   <button
                     type="button"
                     className="back-link"
-                    onClick={() => setBackToLogin(true)}
+                    onClick={() => navigate("/login")}
                   >
                     تسجيل الدخول
                   </button>
@@ -523,7 +518,7 @@ export default function Register() {
               <button
                 type="button"
                 className="register-btn"
-                onClick={() => setBackToLogin(true)}
+                onClick={() => navigate("/login")}
               >
                 الذهاب لتسجيل الدخول
               </button>
