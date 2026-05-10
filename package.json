@@ -1,5 +1,6 @@
 {
   "name": "realstateplatform",
+  "homepage": "https://AhmedGamal248.github.io/real-state",
   "version": "0.0.0",
   "private": true,
   "description": "This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.",
@@ -9,6 +10,8 @@
   "main": "eslint.config.js",
   "scripts": {
     "dev": "vite",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist",
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview"
