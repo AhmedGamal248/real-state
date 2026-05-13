@@ -11,6 +11,8 @@ import {
 import "leaflet/dist/leaflet.css";
 import "leaflet-draw/dist/leaflet.draw.css";
 import L from "leaflet";
+
+
 import "leaflet-draw";
 import "./FinanceMap.css";
 import PropertyCard from "../../components/UI/PropertyCard/PropertyCard";
@@ -21,10 +23,11 @@ const { BaseLayer } = LayersControl;
 // Fix default Leaflet marker icons
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
-  iconUrl: "https://static.vecteezy.com/system/resources/previews/016/314/735/original/home-icon-free-png.png",
+  iconUrl:
+    "https://static.vecteezy.com/system/resources/previews/016/314/735/original/home-icon-free-png.png",
   iconRetinaUrl: "https://cdn-icons-png.flaticon.com/512/619/619034.png",
   shadowUrl: "",
-  iconSize: [35,35],
+  iconSize: [35, 35],
   iconAnchor: [20, 35],
 });
 
@@ -34,7 +37,9 @@ L.Icon.Default.mergeOptions({
 // ── Map controller – captures map instance (replaces whenCreated) ──
 function MapController({ setMapInstance }) {
   const map = useMap();
-  useEffect(() => { setMapInstance(map); }, [map]);
+  useEffect(() => {
+    setMapInstance(map);
+  }, [map]);
   return null;
 }
 
@@ -80,7 +85,7 @@ function DrawControl({
       drawnItems.addLayer(layer);
       const drawnGeo = layer.toGeoJSON();
       const results = properties.filter((p) =>
-        turf.booleanPointInPolygon(turf.point([p.lng, p.lat]), drawnGeo)
+        turf.booleanPointInPolygon(turf.point([p.lng, p.lat]), drawnGeo),
       );
       setFilteredByDraw(results);
       setPolygonDrawn(true);
@@ -96,13 +101,42 @@ function DrawControl({
 
   return null;
 }
-
+function FullscreenControl() {
+  const map = useMap();
+  useEffect(() => {
+    const FullscreenBtn = L.Control.extend({
+      onAdd() {
+        const btn = L.DomUtil.create("button", "leaflet-bar leaflet-control");
+        btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+          <path d="M8 3H5a2 2 0 00-2 2v3m18 0V5a2 2 0 00-2-2h-3m0 18h3a2 2 0 002-2v-3M3 16v3a2 2 0 002 2h3" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>`;
+        btn.title = "تكبير الشاشة";
+        btn.style.cssText = "width:30px;height:30px;cursor:pointer;background:#fff;border:none;display:flex;align-items:center;justify-content:center;";
+        L.DomEvent.on(btn, "click", (e) => {
+          L.DomEvent.stopPropagation(e);
+          const container = map.getContainer();
+          if (!document.fullscreenElement) {
+            container.requestFullscreen();
+            btn.title = "تصغير الشاشة";
+            btn.style.background = "#f0f9ff";
+          } else {
+            document.exitFullscreen();
+            btn.title = "تكبير الشاشة";
+            btn.style.background = "#fff";
+          }
+        });
+        return btn;
+      },
+      onRemove() {},
+    });
+    const ctrl = new FullscreenBtn({ position: "topleft" });
+    ctrl.addTo(map);
+    return () => ctrl.remove();
+  }, [map]);
+  return null;
+}
 // ── FitBounds ──
-function FitBounds({
-  data,
-  selected,
-  isUserZooming,
-}) {
+function FitBounds({ data, selected, isUserZooming }) {
   const map = useMap();
   const prevRef = useRef(null);
 
@@ -192,9 +226,7 @@ const properties = [
     price: 2600000,
     lat: 30.032,
     lng: 31.48,
-    images: [
-      "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688",
-    ],
+    images: ["https://images.unsplash.com/photo-1502672260266-1c1ef2d93688"],
     video: null,
   },
 
@@ -212,9 +244,7 @@ const properties = [
     price: 1950000,
     lat: 30.025,
     lng: 31.46,
-    images: [
-      "https://images.unsplash.com/photo-1586023492125-27b2c045efd7",
-    ],
+    images: ["https://images.unsplash.com/photo-1586023492125-27b2c045efd7"],
     video: null,
   },
 
@@ -232,9 +262,7 @@ const properties = [
     price: 1550000,
     lat: 30.038,
     lng: 31.21,
-    images: [
-      "https://images.unsplash.com/photo-1560448204-603b3fc33ddc",
-    ],
+    images: ["https://images.unsplash.com/photo-1560448204-603b3fc33ddc"],
     video: null,
   },
 
@@ -252,9 +280,7 @@ const properties = [
     price: 2500000,
     lat: 31.2156,
     lng: 29.9553,
-    images: [
-      "https://images.unsplash.com/photo-1600585154340-be6161a56a0c",
-    ],
+    images: ["https://images.unsplash.com/photo-1600585154340-be6161a56a0c"],
     video: null,
   },
 
@@ -272,9 +298,7 @@ const properties = [
     price: 1850000,
     lat: 31.205,
     lng: 29.942,
-    images: [
-      "https://images.unsplash.com/photo-1570129477492-45c003edd2be",
-    ],
+    images: ["https://images.unsplash.com/photo-1570129477492-45c003edd2be"],
     video: null,
   },
 
@@ -292,9 +316,7 @@ const properties = [
     price: 3200000,
     lat: 31.239,
     lng: 29.968,
-    images: [
-      "https://images.unsplash.com/photo-1505691938895-1758d7feb511",
-    ],
+    images: ["https://images.unsplash.com/photo-1505691938895-1758d7feb511"],
     video: null,
   },
 
@@ -313,9 +335,7 @@ const properties = [
     price: 950000,
     lat: 29.899,
     lng: 31.298,
-    images: [
-      "https://images.unsplash.com/photo-1586023492125-27b2c045efd7",
-    ],
+    images: ["https://images.unsplash.com/photo-1586023492125-27b2c045efd7"],
     video: null,
   },
 
@@ -333,9 +353,7 @@ const properties = [
     price: 780000,
     lat: 29.896,
     lng: 31.296,
-    images: [
-      "https://images.unsplash.com/photo-1493809842364-78817add7ffb",
-    ],
+    images: ["https://images.unsplash.com/photo-1493809842364-78817add7ffb"],
     video: null,
   },
 
@@ -353,9 +371,7 @@ const properties = [
     price: 1350000,
     lat: 29.9,
     lng: 31.295,
-    images: [
-      "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688",
-    ],
+    images: ["https://images.unsplash.com/photo-1502672260266-1c1ef2d93688"],
     video: null,
   },
   {
@@ -398,7 +414,7 @@ const properties = [
     ],
     video: null,
   },
-    {
+  {
     id: 14,
     gov: "القاهرة",
     center: "التجمع الخامس",
@@ -426,8 +442,14 @@ const locations = {
     التجمع: ["التجمع الخامس", "التجمع الأول"],
     حلوان: ["حلوان"],
   },
-  الجيزة: { الدقي: ["شارع التحرير", "البحوث"], المهندسين: ["جامعة الدول", "العجوزة"] },
-  الإسكندرية: { سموحة: ["شارع فوزي معاذ", "شارع أبو قير"], "سيدي جابر": ["شارع المشير", "شارع جمال عبد الناصر"] },
+  الجيزة: {
+    الدقي: ["شارع التحرير", "البحوث"],
+    المهندسين: ["جامعة الدول", "العجوزة"],
+  },
+  الإسكندرية: {
+    سموحة: ["شارع فوزي معاذ", "شارع أبو قير"],
+    "سيدي جابر": ["شارع المشير", "شارع جمال عبد الناصر"],
+  },
 };
 
 // ── Main Component ──
@@ -458,8 +480,12 @@ export default function FinanceMap() {
   const sliderTrackRef = useRef(null);
 
   // Area (sqm) filter state
-  const AREA_MIN = Math.min(...properties.filter((p) => p.area).map((p) => p.area));
-  const AREA_MAX = Math.max(...properties.filter((p) => p.area).map((p) => p.area));
+  const AREA_MIN = Math.min(
+    ...properties.filter((p) => p.area).map((p) => p.area),
+  );
+  const AREA_MAX = Math.max(
+    ...properties.filter((p) => p.area).map((p) => p.area),
+  );
   const [areaMin, setAreaMin] = useState(AREA_MIN);
   const [areaMax, setAreaMax] = useState(AREA_MAX);
   const [areaFilterActive, setAreaFilterActive] = useState(false);
@@ -492,8 +518,14 @@ export default function FinanceMap() {
     const onMove = (ev) => {
       if (!isDragging.current || !container) return;
       const cr = container.getBoundingClientRect();
-      const newLeft = Math.max(0, Math.min(ev.clientX - dragOffset.current.x, cr.width - rect.width));
-      const newTop = Math.max(0, Math.min(ev.clientY - dragOffset.current.y, cr.height - 60));
+      const newLeft = Math.max(
+        0,
+        Math.min(ev.clientX - dragOffset.current.x, cr.width - rect.width),
+      );
+      const newTop = Math.max(
+        0,
+        Math.min(ev.clientY - dragOffset.current.y, cr.height - 60),
+      );
       setPopupPos({ left: newLeft, top: newTop });
     };
 
@@ -522,7 +554,11 @@ export default function FinanceMap() {
         mapInstance.setView(L.latLng(userLocation[0], userLocation[1]), 17);
       } else {
         const bounds = L.latLngBounds([userLocation, ...points]);
-        mapInstance.fitBounds(bounds, { padding: [50, 50], maxZoom: 17, duration: 1 });
+        mapInstance.fitBounds(bounds, {
+          padding: [50, 50],
+          maxZoom: 17,
+          duration: 1,
+        });
       }
     }, 100);
   }, [userLocation, nearbyProperties, mapInstance]);
@@ -542,7 +578,7 @@ export default function FinanceMap() {
       const dist = turf.distance(
         turf.point([loc[1], loc[0]]),
         turf.point([p.lng, p.lat]),
-        { units: "meters" }
+        { units: "meters" },
       );
       return dist <= 500;
     });
@@ -553,17 +589,20 @@ export default function FinanceMap() {
     if (!navigator.geolocation) return alert("المتصفح لا يدعم تحديد الموقع");
     navigator.geolocation.getCurrentPosition(
       (pos) => findNearby([pos.coords.latitude, pos.coords.longitude]),
-      () => alert("تعذر الحصول على الموقع الحالي")
+      () => alert("تعذر الحصول على الموقع الحالي"),
     );
   };
 
   // Filtered results
-  const filteredProperties = properties.filter((p) =>
-    (gov === "ALL" || !gov || p.gov === gov) &&
-    (!center || p.center === center) &&
-    (!area || p.areaName === area) &&
-    (!priceFilterActive || (p.price >= priceMin && p.price <= priceMax)) &&
-    (!areaFilterActive || !p.area || (p.area >= areaMin && p.area <= areaMax))
+  const filteredProperties = properties.filter(
+    (p) =>
+      (gov === "ALL" || !gov || p.gov === gov) &&
+      (!center || p.center === center) &&
+      (!area || p.areaName === area) &&
+      (!priceFilterActive || (p.price >= priceMin && p.price <= priceMax)) &&
+      (!areaFilterActive ||
+        !p.area ||
+        (p.area >= areaMin && p.area <= areaMax)),
   );
 
   const displayProperties = (() => {
@@ -579,9 +618,11 @@ export default function FinanceMap() {
     return [];
   })();
 
-  const allDisplayed = [...new Map(
-    [...displayProperties, ...nearbyProperties].map((p) => [p.id, p])
-  ).values()];
+  const allDisplayed = [
+    ...new Map(
+      [...displayProperties, ...nearbyProperties].map((p) => [p.id, p]),
+    ).values(),
+  ];
 
   const toggleFullscreen = () => {
     const el = mapRef.current;
@@ -596,7 +637,11 @@ export default function FinanceMap() {
   const priceHistogram = Array.from({ length: PRICE_BUCKETS }, (_, i) => {
     const lo = PRICE_MIN + i * priceBucketSize;
     const hi = lo + priceBucketSize;
-    return properties.filter((p) => p.price >= lo && (i === PRICE_BUCKETS - 1 ? p.price <= hi : p.price < hi)).length;
+    return properties.filter(
+      (p) =>
+        p.price >= lo &&
+        (i === PRICE_BUCKETS - 1 ? p.price <= hi : p.price < hi),
+    ).length;
   });
   const priceHistMax = Math.max(...priceHistogram, 1);
 
@@ -606,49 +651,113 @@ export default function FinanceMap() {
   const areaHistogram = Array.from({ length: AREA_BUCKETS }, (_, i) => {
     const lo = AREA_MIN + i * areaBucketSize;
     const hi = lo + areaBucketSize;
-    return properties.filter((p) => p.area && p.area >= lo && (i === AREA_BUCKETS - 1 ? p.area <= hi : p.area < hi)).length;
+    return properties.filter(
+      (p) =>
+        p.area &&
+        p.area >= lo &&
+        (i === AREA_BUCKETS - 1 ? p.area <= hi : p.area < hi),
+    ).length;
   });
   const areaHistMax = Math.max(...areaHistogram, 1);
 
-  const applyPriceFilter = () => { setPriceFilterActive(true); setHasFiltered(true); setShowPricePanel(false); };
-  const resetPriceFilter = () => { setPriceMin(PRICE_MIN); setPriceMax(PRICE_MAX); setPriceFilterActive(false); };
-
-  const applyAreaFilter = () => { setAreaFilterActive(true); setHasFiltered(true); setShowAreaPanel(false); };
-  const resetAreaFilter = () => { setAreaMin(AREA_MIN); setAreaMax(AREA_MAX); setAreaFilterActive(false); };
-
-  const makeDragHandler = (handle, setMin, setMax, minVal, maxVal, globalMin, globalMax, trackRef, step = 10000) => (e) => {
-    e.preventDefault();
-    const onMove = (ev) => {
-      const track = trackRef.current;
-      if (!track) return;
-      const clientX = ev.clientX ?? ev.touches?.[0]?.clientX;
-      const { left, width } = track.getBoundingClientRect();
-      const ratio = Math.min(1, Math.max(0, (clientX - left) / width));
-      const value = Math.round((globalMin + ratio * (globalMax - globalMin)) / step) * step;
-      if (handle === "min") setMin(Math.min(value, maxVal - step));
-      else setMax(Math.max(value, minVal + step));
-    };
-    const onUp = () => {
-      document.removeEventListener("mousemove", onMove);
-      document.removeEventListener("mouseup", onUp);
-      document.removeEventListener("touchmove", onMove);
-      document.removeEventListener("touchend", onUp);
-    };
-    document.addEventListener("mousemove", onMove);
-    document.addEventListener("mouseup", onUp);
-    document.addEventListener("touchmove", onMove, { passive: false });
-    document.addEventListener("touchend", onUp);
+  const applyPriceFilter = () => {
+    setPriceFilterActive(true);
+    setHasFiltered(true);
+    setShowPricePanel(false);
+  };
+  const resetPriceFilter = () => {
+    setPriceMin(PRICE_MIN);
+    setPriceMax(PRICE_MAX);
+    setPriceFilterActive(false);
   };
 
-  const startPriceDrag = (h) => makeDragHandler(h, setPriceMin, setPriceMax, priceMin, priceMax, PRICE_MIN, PRICE_MAX, sliderTrackRef, 50000);
-  const startAreaDrag  = (h) => makeDragHandler(h, setAreaMin,  setAreaMax,  areaMin,  areaMax,  AREA_MIN,  AREA_MAX,  areaSliderTrackRef, 5);
+  const applyAreaFilter = () => {
+    setAreaFilterActive(true);
+    setHasFiltered(true);
+    setShowAreaPanel(false);
+  };
+  const resetAreaFilter = () => {
+    setAreaMin(AREA_MIN);
+    setAreaMax(AREA_MAX);
+    setAreaFilterActive(false);
+  };
+
+  const makeDragHandler =
+    (
+      handle,
+      setMin,
+      setMax,
+      minVal,
+      maxVal,
+      globalMin,
+      globalMax,
+      trackRef,
+      step = 10000,
+    ) =>
+    (e) => {
+      e.preventDefault();
+      const onMove = (ev) => {
+        const track = trackRef.current;
+        if (!track) return;
+        const clientX = ev.clientX ?? ev.touches?.[0]?.clientX;
+        const { left, width } = track.getBoundingClientRect();
+        const ratio = Math.min(1, Math.max(0, (clientX - left) / width));
+        const value =
+          Math.round((globalMin + ratio * (globalMax - globalMin)) / step) *
+          step;
+        if (handle === "min") setMin(Math.min(value, maxVal - step));
+        else setMax(Math.max(value, minVal + step));
+      };
+      const onUp = () => {
+        document.removeEventListener("mousemove", onMove);
+        document.removeEventListener("mouseup", onUp);
+        document.removeEventListener("touchmove", onMove);
+        document.removeEventListener("touchend", onUp);
+      };
+      document.addEventListener("mousemove", onMove);
+      document.addEventListener("mouseup", onUp);
+      document.addEventListener("touchmove", onMove, { passive: false });
+      document.addEventListener("touchend", onUp);
+    };
+
+  const startPriceDrag = (h) =>
+    makeDragHandler(
+      h,
+      setPriceMin,
+      setPriceMax,
+      priceMin,
+      priceMax,
+      PRICE_MIN,
+      PRICE_MAX,
+      sliderTrackRef,
+      50000,
+    );
+  const startAreaDrag = (h) =>
+    makeDragHandler(
+      h,
+      setAreaMin,
+      setAreaMax,
+      areaMin,
+      areaMax,
+      AREA_MIN,
+      AREA_MAX,
+      areaSliderTrackRef,
+      5,
+    );
 
   const pMinPct = ((priceMin - PRICE_MIN) / (PRICE_MAX - PRICE_MIN)) * 100;
   const pMaxPct = ((priceMax - PRICE_MIN) / (PRICE_MAX - PRICE_MIN)) * 100;
   const aMinPct = ((areaMin - AREA_MIN) / (AREA_MAX - AREA_MIN)) * 100;
   const aMaxPct = ((areaMax - AREA_MIN) / (AREA_MAX - AREA_MIN)) * 100;
 
-  const activeFiltersCount = [gov, center, area, priceFilterActive, areaFilterActive, userLocation].filter(Boolean).length;
+  const activeFiltersCount = [
+    gov,
+    center,
+    area,
+    priceFilterActive,
+    areaFilterActive,
+    userLocation,
+  ].filter(Boolean).length;
 
   // Close panels on outside click
   useEffect(() => {
@@ -662,9 +771,29 @@ export default function FinanceMap() {
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
-  const RangePanel = ({ title, icon, histogram, histMax, globalMin, globalMax, curMin, curMax, setCurMin, setCurMax,
-    startMinDrag, startMaxDrag, trackRef, minPct, maxPct, onApply, onCancel, step = 50000,
-    formatVal = (v) => v.toLocaleString("ar-EG"), unitLabel = "جنيه", previewMsg }) => {
+  const RangePanel = ({
+    title,
+    icon,
+    histogram,
+    histMax,
+    globalMin,
+    globalMax,
+    curMin,
+    curMax,
+    setCurMin,
+    setCurMax,
+    startMinDrag,
+    startMaxDrag,
+    trackRef,
+    minPct,
+    maxPct,
+    onApply,
+    onCancel,
+    step = 50000,
+    formatVal = (v) => v.toLocaleString("ar-EG"),
+    unitLabel = "جنيه",
+    previewMsg,
+  }) => {
     const count = previewMsg;
     return (
       <div className="filter-pill-popup range-panel">
@@ -677,13 +806,16 @@ export default function FinanceMap() {
         {/* Histogram */}
         <div className="rp-histogram">
           {histogram.map((c, i) => {
-            const lo = globalMin + i * ((globalMax - globalMin) / histogram.length);
+            const lo =
+              globalMin + i * ((globalMax - globalMin) / histogram.length);
             const hi = lo + (globalMax - globalMin) / histogram.length;
             const inRange = lo < curMax && hi > curMin;
             return (
               <div key={i} className="rp-hist-col">
-                <div className={`rp-hist-bar${inRange ? " active" : ""}`}
-                  style={{ height: `${Math.max(8, (c / histMax) * 100)}%` }} />
+                <div
+                  className={`rp-hist-bar${inRange ? " active" : ""}`}
+                  style={{ height: `${Math.max(8, (c / histMax) * 100)}%` }}
+                />
               </div>
             );
           })}
@@ -692,13 +824,24 @@ export default function FinanceMap() {
         {/* Slider */}
         <div className="rp-slider-wrap">
           <div className="rp-track" ref={trackRef}>
-            <div className="rp-fill" style={{ left: `${minPct}%`, width: `${maxPct - minPct}%` }} />
-            <div className="rp-thumb rp-thumb-min" style={{ left: `${minPct}%` }}
-              onMouseDown={startMinDrag} onTouchStart={startMinDrag}>
+            <div
+              className="rp-fill"
+              style={{ left: `${minPct}%`, width: `${maxPct - minPct}%` }}
+            />
+            <div
+              className="rp-thumb rp-thumb-min"
+              style={{ left: `${minPct}%` }}
+              onMouseDown={startMinDrag}
+              onTouchStart={startMinDrag}
+            >
               <div className="rp-bubble">{formatVal(curMin)}</div>
             </div>
-            <div className="rp-thumb rp-thumb-max" style={{ left: `${maxPct}%` }}
-              onMouseDown={startMaxDrag} onTouchStart={startMaxDrag}>
+            <div
+              className="rp-thumb rp-thumb-max"
+              style={{ left: `${maxPct}%` }}
+              onMouseDown={startMaxDrag}
+              onTouchStart={startMaxDrag}
+            >
               <div className="rp-bubble">{formatVal(curMax)}</div>
             </div>
           </div>
@@ -709,17 +852,35 @@ export default function FinanceMap() {
           <div className="rp-input-block">
             <label className="rp-input-label">الحد الأدنى</label>
             <div className="rp-input-field">
-              <input type="number" value={curMin} step={step} min={globalMin} max={curMax - step}
-                onChange={(e) => setCurMin(Math.min(+e.target.value, curMax - step))} />
+              <input
+                type="number"
+                value={curMin}
+                step={step}
+                min={globalMin}
+                max={curMax - step}
+                onChange={(e) =>
+                  setCurMin(Math.min(+e.target.value, curMax - step))
+                }
+              />
               <span className="rp-input-unit">{unitLabel}</span>
             </div>
           </div>
-          <div className="rp-input-sep"><div className="rp-sep-line" /></div>
+          <div className="rp-input-sep">
+            <div className="rp-sep-line" />
+          </div>
           <div className="rp-input-block">
             <label className="rp-input-label">الحد الأقصى</label>
             <div className="rp-input-field">
-              <input type="number" value={curMax} step={step} min={curMin + step} max={globalMax}
-                onChange={(e) => setCurMax(Math.max(+e.target.value, curMin + step))} />
+              <input
+                type="number"
+                value={curMax}
+                step={step}
+                min={curMin + step}
+                max={globalMax}
+                onChange={(e) =>
+                  setCurMax(Math.max(+e.target.value, curMin + step))
+                }
+              />
               <span className="rp-input-unit">{unitLabel}</span>
             </div>
           </div>
@@ -727,244 +888,61 @@ export default function FinanceMap() {
 
         {/* Preview */}
         <div className={`rp-preview ${count > 0 ? "found" : "empty"}`}>
-          {count > 0
-            ? <><span className="rp-dot green" />  {count} عقار متاح في هذا النطاق</>
-            : <><span className="rp-dot amber" /> لا يوجد عقارات في هذا النطاق</>}
+          {count > 0 ? (
+            <>
+              <span className="rp-dot green" /> {count} عقار متاح في هذا النطاق
+            </>
+          ) : (
+            <>
+              <span className="rp-dot amber" /> لا يوجد عقارات في هذا النطاق
+            </>
+          )}
         </div>
 
         {/* Actions */}
         <div className="rp-actions">
-          <button className="rp-btn-cancel" onClick={onCancel}>إلغاء</button>
-          <button className="rp-btn-apply" onClick={onApply} disabled={count === 0}>تطبيق</button>
+          <button className="rp-btn-cancel" onClick={onCancel}>
+            إلغاء
+          </button>
+          <button
+            className="rp-btn-apply"
+            onClick={onApply}
+            disabled={count === 0}
+          >
+            تطبيق
+          </button>
         </div>
       </div>
     );
   };
 
-  const pricePreviewCount = properties.filter((p) => p.price >= priceMin && p.price <= priceMax).length;
-  const areaPreviewCount  = properties.filter((p) => !p.area || (p.area >= areaMin && p.area <= areaMax)).length;
+  const pricePreviewCount = properties.filter(
+    (p) => p.price >= priceMin && p.price <= priceMax,
+  ).length;
+  const areaPreviewCount = properties.filter(
+    (p) => !p.area || (p.area >= areaMin && p.area <= areaMax),
+  ).length;
   const displayedResultsCount = allDisplayed.length;
-  const locationSummary = gov === "ALL"
-    ? "جميع المحافظات"
-    : [area, center, gov].filter(Boolean).join(" / ") || "ابحث حسب الموقع والسعر والمساحة";
+  const locationSummary =
+    gov === "ALL"
+      ? "جميع المحافظات"
+      : [area, center, gov].filter(Boolean).join(" / ") ||
+        "ابحث حسب الموقع والسعر والمساحة";
 
   return (
     <div className="finance-page" ref={mapRef}>
-     
-
-       {/* ══ Filters Bar ══ */}
-      <div className={`filters${filtersOpen ? " filters--open" : " filters--closed"}`}>
-
-        {/* ── Collapsible header (always visible) ── */}
-        <div className="filters-top" onClick={() => setFiltersOpen((v) => !v)} style={{ cursor: "pointer" }}>
-          <div className="filters-heading">
-            <span className="filters-kicker">لوحة البحث الذكية</span>
-            <strong className="filters-title">اختيار أسرع للعقار المناسب</strong>
-            <p className="filters-summary" onClick={(e) => e.stopPropagation()}>{locationSummary}</p>
-          </div>
-
-          <div className="filters-top-end">
-            {/* Toggle chevron */}
-            <button
-              className="filters-toggle-btn"
-              onClick={(e) => { e.stopPropagation(); setFiltersOpen((v) => !v); }}
-              aria-label={filtersOpen ? "إخفاء الفلاتر" : "عرض الفلاتر"}
-            >
-              <svg
-                className={`filters-toggle-chevron${filtersOpen ? " filters-toggle-chevron--open" : ""}`}
-                viewBox="0 0 10 6" fill="none" width="14" height="14"
-              >
-                <path d="M1 1l4 4 4-4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
-              </svg>
-            </button>
-            <div className="filters-status">
-              <div className="filters-status-chip">
-                <span className="filters-status-value">{displayedResultsCount}</span>
-                <span className="filters-status-label">نتيجة ظاهرة</span>
-              </div>
-              <div className="filters-status-chip">
-                <span className="filters-status-value">{activeFiltersCount}</span>
-                <span className="filters-status-label">فلتر نشط</span>
-              </div>
-            </div>
-
-            
-          </div>
-        </div>
-
-        {/* ── Collapsible body ── */}
-        <div className="filters-body">
-        <div className="filters-toolbar">
-
-        {/* Brand chip */}
-        <div className="filter-brand">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-            <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
-          </svg>
-          <span>عقارات</span>
-        </div>
-
-        <div className="filter-sep" />
-
-        {/* ── المحافظة / المركز / الشياخة ── */}
-        <div className="filter-pill-group">
-          <span className="fpg-label">📍 الموقع</span>
-          <div className="fpg-controls">
-            <div className="fp-select-wrap">
-              <select className="fp-select" value={gov} onChange={(e) => { setGov(e.target.value); setCenter(""); setArea(""); setHasFiltered(true); setSelected(null); }}>
-                <option value="">المحافظة</option>
-                {Object.keys(locations).map((g) => <option key={g}>{g}</option>)}
-                <option value="ALL">الكل</option>
-              </select>
-            </div>
-            <div className="fp-select-wrap">
-              <select className="fp-select" value={center} onChange={(e) => { setCenter(e.target.value); setArea(""); setHasFiltered(true); setSelected(null); }}>
-                <option value="">المركز</option>
-                {gov && locations[gov] && Object.keys(locations[gov]).map((c) => <option key={c}>{c}</option>)}
-              </select>
-            </div>
-            <div className="fp-select-wrap">
-              <select className="fp-select" value={area} onChange={(e) => { setArea(e.target.value); setHasFiltered(true); setSelected(null); }}>
-                <option value="">الشياخة</option>
-                {gov && center && locations[gov]?.[center]?.map((a) => <option key={a}>{a}</option>)}
-              </select>
-            </div>
-          </div>
-        </div>
-
-        <div className="filter-sep" />
-
-        {/* ── السعر ── */}
-        <div className="filter-pill-group" style={{ position: "relative" }}>
-          <span className="fpg-label">💰 السعر</span>
-          <div className="fpg-controls">
-            <button
-              className={`fp-pill-btn${priceFilterActive ? " fp-pill-active" : ""}${showPricePanel ? " fp-pill-open" : ""}`}
-              onClick={() => { setShowPricePanel((v) => !v); setShowAreaPanel(false); }}
-            >
-              <span className="fp-pill-icon">💰</span>
-              <span className="fp-pill-label">
-                {priceFilterActive
-                  ? `${(priceMin / 1000000).toFixed(1)}م — ${(priceMax / 1000000).toFixed(1)}م`
-                  : "نطاق السعر"}
-              </span>
-              {priceFilterActive
-                ? <span className="fp-pill-clear" onMouseDown={(e) => { e.stopPropagation(); resetPriceFilter(); }}>✕</span>
-                : <svg className="fp-pill-chevron" viewBox="0 0 10 6" fill="none"><path d="M1 1l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></svg>
-              }
-            </button>
-
-            {showPricePanel && (
-              <RangePanel
-                title="نطاق السعر" icon="💰"
-                histogram={priceHistogram} histMax={priceHistMax}
-                globalMin={PRICE_MIN} globalMax={PRICE_MAX}
-                curMin={priceMin} curMax={priceMax}
-                setCurMin={setPriceMin} setCurMax={setPriceMax}
-                startMinDrag={startPriceDrag("min")} startMaxDrag={startPriceDrag("max")}
-                trackRef={sliderTrackRef} minPct={pMinPct} maxPct={pMaxPct}
-                onApply={applyPriceFilter} onCancel={() => setShowPricePanel(false)}
-                step={50000}
-                formatVal={(v) => `${(v / 1000000).toFixed(2)}م`}
-                unitLabel="جنيه"
-                previewMsg={pricePreviewCount}
-              />
-            )}
-          </div>
-        </div>
-
-        <div className="filter-sep" />
-
-        {/* ── المساحة ── */}
-        <div className="filter-pill-group" style={{ position: "relative" }}>
-          <span className="fpg-label">📐 المساحة</span>
-          <div className="fpg-controls">
-            <button
-              className={`fp-pill-btn${areaFilterActive ? " fp-pill-active fp-pill-area" : ""}${showAreaPanel ? " fp-pill-open" : ""}`}
-              onClick={() => { setShowAreaPanel((v) => !v); setShowPricePanel(false); }}
-            >
-              <span className="fp-pill-icon">📐</span>
-              <span className="fp-pill-label">
-                {areaFilterActive ? `${areaMin} — ${areaMax} م²` : "نطاق المساحة"}
-              </span>
-              {areaFilterActive
-                ? <span className="fp-pill-clear" onMouseDown={(e) => { e.stopPropagation(); resetAreaFilter(); }}>✕</span>
-                : <svg className="fp-pill-chevron" viewBox="0 0 10 6" fill="none"><path d="M1 1l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></svg>
-              }
-            </button>
-
-            {showAreaPanel && (
-              <RangePanel
-                title="نطاق المساحة" icon="📐"
-                histogram={areaHistogram} histMax={areaHistMax}
-                globalMin={AREA_MIN} globalMax={AREA_MAX}
-                curMin={areaMin} curMax={areaMax}
-                setCurMin={setAreaMin} setCurMax={setAreaMax}
-                startMinDrag={startAreaDrag("min")} startMaxDrag={startAreaDrag("max")}
-                trackRef={areaSliderTrackRef} minPct={aMinPct} maxPct={aMaxPct}
-                onApply={applyAreaFilter} onCancel={() => setShowAreaPanel(false)}
-                step={5}
-                formatVal={(v) => `${v} م²`}
-                unitLabel="م²"
-                previewMsg={areaPreviewCount}
-              />
-            )}
-          </div>
-        </div>
-
-        <div className="filter-sep" />
-
-        {/* ── الموقع الجغرافي ── */}
-        <div className="filter-pill-group">
-          <span className="fpg-label">🧭 جغرافي</span>
-          <div className="fpg-controls">
-            <button className={`fp-pill-btn fp-geo-btn${userLocation ? " fp-pill-active" : ""}`} onClick={handleUserLocationZoom}>
-              <span className="fp-pill-icon">🧭</span>
-              <span className="fp-pill-label">موقعي</span>
-            </button>
-            <button className={`fp-pill-btn fp-geo-btn${drawMode ? " fp-pill-draw" : ""}`} onClick={handleDrawBtnClick} title={drawBtnText} aria-label={drawBtnText}>
-              <span className="fp-pill-icon">{drawMode ? "❌" : "🟦"}</span>
-              <span className="fp-pill-label">{drawMode ? "إلغاء" : "استعلام"}</span>
-            </button>
-          </div>
-        </div>
-
-        <div className="filter-sep" />
-
-        {/* ── إلغاء الكل ── */}
-        <button className="fp-reset-btn" onClick={() => {
-          setFilteredByDraw([]); setHasFiltered(false);
-          setPolygonDrawn(false); setDrawMode(false);
-          setDrawBtnText("🟦 استعلام مكاني");
-          setGov(""); setCenter(""); setArea("");
-          setUserLocation(null); setNearbyProperties([]);
-          setPopupPos(null);
-          setPriceMin(PRICE_MIN); setPriceMax(PRICE_MAX); setPriceFilterActive(false); setShowPricePanel(false);
-          setAreaMin(AREA_MIN); setAreaMax(AREA_MAX); setAreaFilterActive(false); setShowAreaPanel(false);
-          if (clearDrawRef.current) clearDrawRef.current();
-          if (mapInstance) mapInstance.flyTo([30.0444, 31.2357], 10, { duration: 1 });
-        }}>
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-            <path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/>
-          </svg>
-          مسح الكل
-          {activeFiltersCount > 0 && <span className="fp-reset-badge">{activeFiltersCount}</span>}
-        </button>
-
-        </div>
-        </div>{/* end filters-body */}
-      </div>
-
       
-
-     
 
       {/* Results popup - يظهر عند وجود نتائج أو عند رسم polygon فارضة */}
       {(allDisplayed.length > 0 || (drawMode && polygonDrawn)) && (
         <div
           className="results-popup"
           ref={popupRef}
-          style={popupPos ? { top: popupPos.top, left: popupPos.left, right: "unset" } : undefined}
+          style={
+            popupPos
+              ? { top: popupPos.top, left: popupPos.left, right: "unset" }
+              : undefined
+          }
         >
           <div
             className="popup-drag-handle"
@@ -973,9 +951,14 @@ export default function FinanceMap() {
           >
             <span className="drag-dots">⠿</span>
             <h3 className="popup-title" style={{ margin: 0 }}>
-              {allDisplayed.length > 0 ? `نتائج البحث (${allDisplayed.length})` : "نتائج البحث"}
+              {allDisplayed.length > 0
+                ? `نتائج البحث (${allDisplayed.length})`
+                : "نتائج البحث"}
               {nearbyProperties.length > 0 && (
-                <span className="nearby-badge" style={{ marginRight: 8, fontSize: 11 }}>
+                <span
+                  className="nearby-badge"
+                  style={{ marginRight: 8, fontSize: 11 }}
+                >
                   {nearbyProperties.length} قريب منك
                 </span>
               )}
@@ -991,22 +974,43 @@ export default function FinanceMap() {
           ) : (
             <table className="results-table">
               <thead>
-                <tr><th>المنطقة</th><th>السعر</th><th>المساحة</th><th></th></tr>
+                <tr>
+                  <th>المنطقة</th>
+                  <th>السعر</th>
+                  <th>المساحة</th>
+                  <th></th>
+                </tr>
               </thead>
               <tbody>
                 {allDisplayed.map((p) => {
                   const isNearby = nearbyProperties.some((n) => n.id === p.id);
                   return (
-                    <tr key={p.id} style={isNearby ? { background: "rgba(16,185,129,0.07)" } : {}}>
+                    <tr
+                      key={p.id}
+                      style={
+                        isNearby ? { background: "rgba(16,185,129,0.07)" } : {}
+                      }
+                    >
                       <td>
-                        {isNearby && <span className="nearby-badge">📍قريب</span>}
+                        {isNearby && (
+                          <span className="nearby-badge">📍قريب</span>
+                        )}
                         {p.name}
                       </td>
-                      <td className="price">{p.price.toLocaleString("ar-EG")}جنيه</td>
-                      
-                      <td className="area">{p.area ? `${p.area} م²` : "غير محددة"}</td>
+                      <td className="price">
+                        {p.price.toLocaleString("ar-EG")}جنيه
+                      </td>
+
+                      <td className="area">
+                        {p.area ? `${p.area} م²` : "غير محددة"}
+                      </td>
                       <td>
-                        <button className="zoomBtn" onClick={() => setSelected(p)}>عرض</button>
+                        <button
+                          className="zoomBtn"
+                          onClick={() => setSelected(p)}
+                        >
+                          عرض
+                        </button>
                       </td>
                     </tr>
                   );
@@ -1018,15 +1022,18 @@ export default function FinanceMap() {
       )}
 
       {/* Map */}
-      {/* Fullscreen button */}
-      <button className="fullscreen-btn" onClick={toggleFullscreen} title="ملء الشاشة">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="20" height="20">
-          <path d="M8 3H5a2 2 0 00-2 2v3m18 0V5a2 2 0 00-2-2h-3m0 18h3a2 2 0 002-2v-3M3 16v3a2 2 0 002 2h3" />
-        </svg>
-      </button>
-      <MapContainer center={[30.0444, 31.2357]} zoom={10} className="map-container">
-        <MapController setMapInstance={setMapInstance} />
+  
 
+
+
+
+      <MapContainer
+        center={[30.0444, 31.2357]}
+        zoom={10}
+        className="map-container"
+      >
+        <MapController setMapInstance={setMapInstance} />
+        <FullscreenControl pageRef={mapRef} />
         <LayersControl position="topright">
           <BaseLayer checked name="Satellite">
             <TileLayer url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}" />
@@ -1035,6 +1042,374 @@ export default function FinanceMap() {
             <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
           </BaseLayer>
         </LayersControl>
+        {/* ══ Filters Bar ══ */}
+      <div
+        className={`filters${filtersOpen ? " filters--closed" :  " filters--open"}`}
+      >
+        {/* ── Collapsible header (always visible) ── */}
+        <div
+          className="filters-top"
+          onClick={() => setFiltersOpen((v) => !v)}
+          style={{ cursor: "pointer" }}
+        >
+          <div className="filters-heading">
+            <span className="filters-kicker">لوحة البحث الذكية</span>
+            <strong className="filters-title">
+              اختيار أسرع للعقار المناسب
+            </strong>
+            <p className="filters-summary" onClick={(e) => e.stopPropagation()}>
+              {locationSummary}
+            </p>
+          </div>
+
+          <div className="filters-top-end">
+            {/* Toggle chevron */}
+            <button
+              className="filters-toggle-btn"
+              onClick={(e) => {
+                e.stopPropagation();
+                setFiltersOpen((v) => !v);
+              }}
+              aria-label={filtersOpen ? "إخفاء الفلاتر" : "عرض الفلاتر"}
+            >
+              <svg
+                className={`filters-toggle-chevron${filtersOpen ? " filters-toggle-chevron--open" : ""}`}
+                viewBox="0 0 10 6"
+                fill="none"
+                width="14"
+                height="14"
+              >
+                <path
+                  d="M1 1l4 4 4-4"
+                  stroke="currentColor"
+                  strokeWidth="1.8"
+                  strokeLinecap="round"
+                />
+              </svg>
+            </button>
+            <div className="filters-status">
+              <div className="filters-status-chip">
+                <span className="filters-status-value">
+                  {displayedResultsCount}
+                </span>
+                <span className="filters-status-label">نتيجة ظاهرة</span>
+              </div>
+              <div className="filters-status-chip">
+                <span className="filters-status-value">
+                  {activeFiltersCount}
+                </span>
+                <span className="filters-status-label">فلتر نشط</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* ── Collapsible body ── */}
+        <div className="filters-body">
+          <div className="filters-toolbar">
+            {/* Brand chip */}
+            <div className="filter-brand">
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+              >
+                <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
+                <polyline points="9 22 9 12 15 12 15 22" />
+              </svg>
+              <span>عقارات</span>
+            </div>
+
+            <div className="filter-sep" />
+
+            {/* ── المحافظة / المركز / الشياخة ── */}
+            <div className="filter-pill-group">
+              <span className="fpg-label">📍 الموقع</span>
+              <div className="fpg-controls">
+                <div className="fp-select-wrap">
+                  <select
+                    className="fp-select"
+                    value={gov}
+                    onChange={(e) => {
+                      setGov(e.target.value);
+                      setCenter("");
+                      setArea("");
+                      setHasFiltered(true);
+                      setSelected(null);
+                    }}
+                  >
+                    <option value="">المحافظة</option>
+                    {Object.keys(locations).map((g) => (
+                      <option key={g}>{g}</option>
+                    ))}
+                    <option value="ALL">الكل</option>
+                  </select>
+                </div>
+                <div className="fp-select-wrap">
+                  <select
+                    className="fp-select"
+                    value={center}
+                    onChange={(e) => {
+                      setCenter(e.target.value);
+                      setArea("");
+                      setHasFiltered(true);
+                      setSelected(null);
+                    }}
+                  >
+                    <option value="">المركز</option>
+                    {gov &&
+                      locations[gov] &&
+                      Object.keys(locations[gov]).map((c) => (
+                        <option key={c}>{c}</option>
+                      ))}
+                  </select>
+                </div>
+                <div className="fp-select-wrap">
+                  <select
+                    className="fp-select"
+                    value={area}
+                    onChange={(e) => {
+                      setArea(e.target.value);
+                      setHasFiltered(true);
+                      setSelected(null);
+                    }}
+                  >
+                    <option value="">الشياخة</option>
+                    {gov &&
+                      center &&
+                      locations[gov]?.[center]?.map((a) => (
+                        <option key={a}>{a}</option>
+                      ))}
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div className="filter-sep" />
+
+            {/* ── السعر ── */}
+            <div className="filter-pill-group" style={{ position: "relative" }}>
+              <span className="fpg-label">💰 السعر</span>
+              <div className="fpg-controls">
+                <button
+                  className={`fp-pill-btn${priceFilterActive ? " fp-pill-active" : ""}${showPricePanel ? " fp-pill-open" : ""}`}
+                  onClick={() => {
+                    setShowPricePanel((v) => !v);
+                    setShowAreaPanel(false);
+                  }}
+                >
+                  <span className="fp-pill-icon">💰</span>
+                  <span className="fp-pill-label">
+                    {priceFilterActive
+                      ? `${(priceMin / 1000000).toFixed(1)}م — ${(priceMax / 1000000).toFixed(1)}م`
+                      : "نطاق السعر"}
+                  </span>
+                  {priceFilterActive ? (
+                    <span
+                      className="fp-pill-clear"
+                      onMouseDown={(e) => {
+                        e.stopPropagation();
+                        resetPriceFilter();
+                      }}
+                    >
+                      ✕
+                    </span>
+                  ) : (
+                    <svg
+                      className="fp-pill-chevron"
+                      viewBox="0 0 10 6"
+                      fill="none"
+                    >
+                      <path
+                        d="M1 1l4 4 4-4"
+                        stroke="currentColor"
+                        strokeWidth="1.5"
+                        strokeLinecap="round"
+                      />
+                    </svg>
+                  )}
+                </button>
+
+                {showPricePanel && (
+                  <RangePanel
+                    title="نطاق السعر"
+                    icon="💰"
+                    histogram={priceHistogram}
+                    histMax={priceHistMax}
+                    globalMin={PRICE_MIN}
+                    globalMax={PRICE_MAX}
+                    curMin={priceMin}
+                    curMax={priceMax}
+                    setCurMin={setPriceMin}
+                    setCurMax={setPriceMax}
+                    startMinDrag={startPriceDrag("min")}
+                    startMaxDrag={startPriceDrag("max")}
+                    trackRef={sliderTrackRef}
+                    minPct={pMinPct}
+                    maxPct={pMaxPct}
+                    onApply={applyPriceFilter}
+                    onCancel={() => setShowPricePanel(false)}
+                    step={50000}
+                    formatVal={(v) => `${(v / 1000000).toFixed(2)}م`}
+                    unitLabel="جنيه"
+                    previewMsg={pricePreviewCount}
+                  />
+                )}
+              </div>
+            </div>
+
+            <div className="filter-sep" />
+
+            {/* ── المساحة ── */}
+            <div className="filter-pill-group" style={{ position: "relative" }}>
+              <span className="fpg-label">📐 المساحة</span>
+              <div className="fpg-controls">
+                <button
+                  className={`fp-pill-btn${areaFilterActive ? " fp-pill-active fp-pill-area" : ""}${showAreaPanel ? " fp-pill-open" : ""}`}
+                  onClick={() => {
+                    setShowAreaPanel((v) => !v);
+                    setShowPricePanel(false);
+                  }}
+                >
+                  <span className="fp-pill-icon">📐</span>
+                  <span className="fp-pill-label">
+                    {areaFilterActive
+                      ? `${areaMin} — ${areaMax} م²`
+                      : "نطاق المساحة"}
+                  </span>
+                  {areaFilterActive ? (
+                    <span
+                      className="fp-pill-clear"
+                      onMouseDown={(e) => {
+                        e.stopPropagation();
+                        resetAreaFilter();
+                      }}
+                    >
+                      ✕
+                    </span>
+                  ) : (
+                    <svg
+                      className="fp-pill-chevron"
+                      viewBox="0 0 10 6"
+                      fill="none"
+                    >
+                      <path
+                        d="M1 1l4 4 4-4"
+                        stroke="currentColor"
+                        strokeWidth="1.5"
+                        strokeLinecap="round"
+                      />
+                    </svg>
+                  )}
+                </button>
+
+                {showAreaPanel && (
+                  <RangePanel
+                    title="نطاق المساحة"
+                    icon="📐"
+                    histogram={areaHistogram}
+                    histMax={areaHistMax}
+                    globalMin={AREA_MIN}
+                    globalMax={AREA_MAX}
+                    curMin={areaMin}
+                    curMax={areaMax}
+                    setCurMin={setAreaMin}
+                    setCurMax={setAreaMax}
+                    startMinDrag={startAreaDrag("min")}
+                    startMaxDrag={startAreaDrag("max")}
+                    trackRef={areaSliderTrackRef}
+                    minPct={aMinPct}
+                    maxPct={aMaxPct}
+                    onApply={applyAreaFilter}
+                    onCancel={() => setShowAreaPanel(false)}
+                    step={5}
+                    formatVal={(v) => `${v} م²`}
+                    unitLabel="م²"
+                    previewMsg={areaPreviewCount}
+                  />
+                )}
+              </div>
+            </div>
+
+            <div className="filter-sep" />
+
+            {/* ── الموقع الجغرافي ── */}
+            <div className="filter-pill-group">
+              <span className="fpg-label">🧭 جغرافي</span>
+              <div className="fpg-controls">
+                <button
+                  className={`fp-pill-btn fp-geo-btn${userLocation ? " fp-pill-active" : ""}`}
+                  onClick={handleUserLocationZoom}
+                >
+                  <span className="fp-pill-icon">🧭</span>
+                  <span className="fp-pill-label">موقعي</span>
+                </button>
+                <button
+                  className={`fp-pill-btn fp-geo-btn${drawMode ? " fp-pill-draw" : ""}`}
+                  onClick={handleDrawBtnClick}
+                  title={drawBtnText}
+                  aria-label={drawBtnText}
+                >
+                  <span className="fp-pill-icon">{drawMode ? "❌" : "🟦"}</span>
+                  <span className="fp-pill-label">
+                    {drawMode ? "إلغاء" : "استعلام"}
+                  </span>
+                </button>
+              </div>
+            </div>
+
+            <div className="filter-sep" />
+
+            {/* ── إلغاء الكل ── */}
+            <button
+              className="fp-reset-btn"
+              onClick={() => {
+                setFilteredByDraw([]);
+                setHasFiltered(false);
+                setPolygonDrawn(false);
+                setDrawMode(false);
+                setDrawBtnText("🟦 استعلام مكاني");
+                setGov("");
+                setCenter("");
+                setArea("");
+                setUserLocation(null);
+                setNearbyProperties([]);
+                setPopupPos(null);
+                setPriceMin(PRICE_MIN);
+                setPriceMax(PRICE_MAX);
+                setPriceFilterActive(false);
+                setShowPricePanel(false);
+                setAreaMin(AREA_MIN);
+                setAreaMax(AREA_MAX);
+                setAreaFilterActive(false);
+                setShowAreaPanel(false);
+                if (clearDrawRef.current) clearDrawRef.current();
+                if (mapInstance)
+                  mapInstance.flyTo([30.0444, 31.2357], 10, { duration: 1 });
+              }}
+            >
+              <svg
+                width="13"
+                height="13"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+              >
+                <path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6" />
+              </svg>
+              مسح الكل
+              {activeFiltersCount > 0 && (
+                <span className="fp-reset-badge">{activeFiltersCount}</span>
+              )}
+            </button>
+          </div>
+        </div>
+        {/* end filters-body */}
+      </div>
 
         {/* Property markers */}
         {allDisplayed.map((p) => (
@@ -1044,7 +1419,8 @@ export default function FinanceMap() {
             eventHandlers={{ click: () => setSelectedProperty(p) }}
           >
             <Popup>
-              <strong>{p.name}</strong><br />
+              <strong>{p.name}</strong>
+              <br />
               السعر: {p.price.toLocaleString("ar-EG")} جنيه
             </Popup>
           </Marker>
@@ -1055,8 +1431,15 @@ export default function FinanceMap() {
           <>
             <Marker position={userLocation} icon={personIcon}>
               <Popup>
-                <div style={{ textAlign: "center", fontFamily: "Tajawal, sans-serif", direction: "rtl" }}>
-                  <strong>📍 أنت هنا</strong><br />
+                <div
+                  style={{
+                    textAlign: "center",
+                    fontFamily: "Tajawal, sans-serif",
+                    direction: "rtl",
+                  }}
+                >
+                  <strong>📍 أنت هنا</strong>
+                  <br />
                   <small style={{ color: "#64748b" }}>دائرة 500 متر حولك</small>
                 </div>
               </Popup>
@@ -1064,14 +1447,23 @@ export default function FinanceMap() {
             <Circle
               center={userLocation}
               radius={500}
-              pathOptions={{ color: "#3b82f6", fillColor: "#000000", fillOpacity: 0.5, weight: 3 }}
+              pathOptions={{
+                color: "#3b82f6",
+                fillColor: "#000000",
+                fillOpacity: 0.5,
+                weight: 3,
+              }}
             />
           </>
         )}
 
         {/* FitBounds */}
         {allDisplayed.length > 0 && (
-          <FitBounds data={allDisplayed} selected={selected} isUserZooming={isUserZooming} />
+          <FitBounds
+            data={allDisplayed}
+            selected={selected}
+            isUserZooming={isUserZooming}
+          />
         )}
 
         {selected && <ZoomToLocation lat={selected.lat} lng={selected.lng} />}
@@ -1088,7 +1480,10 @@ export default function FinanceMap() {
       </MapContainer>
       {/* Property Card Modal */}
       {selectedProperty && (
-        <PropertyCard property={selectedProperty} onClose={() => setSelectedProperty(null)} />
+        <PropertyCard
+          property={selectedProperty}
+          onClose={() => setSelectedProperty(null)}
+        />
       )}
     </div>
   );

@@ -53,8 +53,8 @@
    Filters Bar — Professional Redesign
 ══════════════════════════════════════════ */
 .filters {
-  top: 14px;
-  left: 50%;
+  top: 5px;
+  left: 5%;
   display: flex;
   flex-direction: column;
   gap: 14px;
@@ -69,9 +69,12 @@
     0 8px 40px rgba(0, 0, 0, 0.45),
     0 0 0 0.5px rgba(255, 255, 255, 0.04) inset,
     0 1px 0 rgba(255, 255, 255, 0.06) inset;
-  width: auto;
+  width: 88%;
+  margin: auto;
   max-width: 92vw;
   overflow: visible;
+  position: absolute;
+  z-index: 99;
 }
 
 /* ── Collapsible body ── */
@@ -1875,7 +1878,8 @@ img.leaflet-marker-icon.leaflet-zoom-animated.leaflet-interactive:hover {
 /* ── Small phones (≤ 420px) ── */
 @media (max-width: 420px) {
   .filters {
-    width: 100%;
+    left: 14%;
+    width: 70%;
     padding: 8px 7px;
     gap: 6px;
   }
@@ -1895,8 +1899,7 @@ img.leaflet-marker-icon.leaflet-zoom-animated.leaflet-interactive:hover {
     grid-column: 1 / -1;
   }
   .filters-status-chip {
-    min-width: 46px;
-    padding: 5px 6px;
+    display: none;
   }
   .filters-title { font-size: 0.82rem; }
   .fp-pill-btn, .fp-select { font-size: 9.5px; }
@@ -2018,4 +2021,26 @@ img.leaflet-marker-icon.leaflet-zoom-animated.leaflet-interactive:hover {
 .hamburger {
   position: relative;
   z-index: 100000;
+}
+/* ── Fullscreen: keep filters floating above the map ── */
+:fullscreen .filters,
+:-webkit-full-screen .filters,
+:-moz-full-screen .filters {
+  position: absolute;
+  top: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+}
+
+:fullscreen .results-popup,
+:-webkit-full-screen .results-popup,
+:-moz-full-screen .results-popup {
+  z-index: 9999;
+}
+
+:fullscreen .finance-page,
+:-webkit-full-screen .finance-page {
+  height: 100vh;
+  border-radius: 0;
 }
