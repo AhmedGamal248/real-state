@@ -13,9 +13,9 @@ const STATUS_CLASS = {
   "في المفاوضات": "badge--negotiating",
 };
 
-const MONTHS = ["نوفمبر", "ديسمبر", "يناير", "فبراير", "مارس", "أبريل"];
-const BARS = [45, 60, 38, 72, 55, 80];
-const VALUES = ["4.5M", "6.1M", "3.8M", "7.2M", "5.5M", "8.1M"];
+const MONTHS = ["نوفمبر", "ديسمبر", "يناير", "فبراير", "مارس", "أبريل","مايو","يونيو","يوليو" ];
+const BARS = [45, 60, 38, 72, 55, 80,66, 60, 38];
+const VALUES = ["4.5M", "6.1M", "3.8M", "7.2M", "5.5M", "8.1M","6.6M", "6.1M", "3.8M"];
 
 const Badge = ({ label }) => {
   const mod = STATUS_CLASS[label] ?? "badge--default";
@@ -146,22 +146,26 @@ export default function DashboardHome({
       </div>
 
       <div className="dashboard-two-col dashboard-two-col--feature">
-        {/* <div className="card dashboard-map-card">
-          <div className="map-header">
-            <div>
-              <span className="section-chip">خريطة تفاعلية</span>
-              <div className="card-title">مواقع الوحدات</div>
-              <p className="map-subtitle">
-                فلترة أسرع مع عرض مباشر للنتائج داخل اللوحة.
-              </p>
-            </div>
-            <span className="map-link">تحديث مباشر</span>
+        <div className="card dashboard-map-card">
+        <div className="map-header">
+          <div>
+            <div className="card-title">مواقع الوحدات</div>
           </div>
 
-          <div className="map-shell">
-            <FinanceMap />
-          </div>
-        </div> */}
+          <span className="map-link">تحديث مباشر</span>
+        </div>
+
+  <div className="mini-map">
+      <div className="map-pin pin-1"></div>
+      <div className="map-pin pin-2"></div>
+      <div className="map-pin pin-3"></div>
+      <div className="map-pin pin-4"></div>
+      <div className="map-pin pin-5"></div>
+      <div className="map-pin pin-6"></div>
+      <div className="map-pin pin-7"></div>
+      <div className="map-pin pin-8"></div>
+  </div>
+</div>
 
         <div className="card">
           <div className="card-title">مبيعات الأشهر الستة</div>

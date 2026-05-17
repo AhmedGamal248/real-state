@@ -1563,3 +1563,61 @@ code {
 .test1{
   height: 90vh;
 }
+.mini-map {
+  position: relative;
+  width: 100%;
+  height: 226px;
+  border-radius: 20px;
+  overflow: hidden;
+  margin-top: 16px;
+
+  /* خلفية فاتحة */
+  background-color: #f8fafc;
+
+  /* خطوط شبه شوارع */
+  background-image:
+    linear-gradient(#e5e7eb 1px, transparent 1px),
+    linear-gradient(90deg, #e5e7eb 1px, transparent 1px);
+
+  background-size: 40px 40px;
+
+  border: 1px solid #e5e7eb;
+}
+
+/* النقاط */
+.map-pin {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  background: #2563eb;
+  border-radius: 50%;
+  box-shadow: 0 0 0 6px rgba(37, 99, 235, 0.15);
+  animation: pulse 2s infinite;
+}
+
+/* أماكن الوحدات */
+.pin-1 { top: 20%; left: 18%; }
+.pin-2 { top: 35%; left: 62%; }
+.pin-3 { top: 58%; left: 40%; }
+.pin-4 { top: 72%; left: 75%; }
+.pin-5 { top: 48%; left: 20%; }
+.pin-6 { top: 15%; left: 78%; }
+.pin-7 { top: 65%; left: 55%; }
+.pin-8 { top: 28%; left: 42%; }
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  70% {
+    transform: scale(1.5);
+    opacity: 0.5;
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
