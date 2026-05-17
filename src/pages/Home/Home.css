@@ -484,6 +484,11 @@
   transition: all 0.25s ease;
 }
 
+.tab-btn-reports {
+  text-decoration: none;
+  color: #64748b;
+}
+
 .tab-btn:hover {
   background: #e0f2fe;
   color: #0369a1;

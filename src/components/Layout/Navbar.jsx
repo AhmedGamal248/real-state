@@ -10,7 +10,7 @@ const NAV_ITEMS = [
   { label: "الخدمات", href: "#services-section" },
   { label: "لوحة التحكم", to: "/dashboard" },
   { label: "الأسئلة الشائعة", href: "#faq" },
-  { label: "تواصل معنا", href: "#Footer" },
+  { label: "تواصل معنا",to: "/contactus" },
 ];
 
 export default function Navbar() {
@@ -91,13 +91,6 @@ export default function Navbar() {
     className="nav-logo-img"
   />
 
-  {/* <div className="brand-text">
-    <span className="brand-name">EDGE PRO</span>
-
-    <span className="brand-sub">
-      Interactive real estate services
-    </span>
-  </div> */}
 </Link>
 
       {/* ── Desktop nav links (center) ─────────────────────── */}

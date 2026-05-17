@@ -15,7 +15,8 @@ const services = [
     title: "التمويل العقاري",
     desc: "احصل على أفضل عروض التمويل من كبرى البنوك المصرية بخطوة واحدة.",
     color: "#0ea5e9",
-    to: "/dashboard",
+    to: "#services-section",
+    href: "#services-section"
   },
   {
     icon: "📋",
@@ -73,11 +74,6 @@ const whyUs = [
   },
 ];
 
-const tabs = [
-  { id: "finance", label: "🏦 التمويل العقاري" },
-  { id: "consult", label: "📋 التسجيل والاستشارات القانونية" },
-  { id: "reports", label: "📊 التقارير والتحليلات" },
-];
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState("finance");
@@ -206,18 +202,39 @@ export default function Home() {
 
         <div className="tabs-container">
           <div className="tabs-bar">
-            {tabs.map((tab) => (
-              <button
-                key={tab.id}
-                className={`tab-btn ${activeTab === tab.id ? "tab-active" : ""}`}
-                onClick={() => setActiveTab(tab.id)}
-              >
-                {tab.label}
-              </button>
-            ))}
-          </div>
 
-          <div className="tab-panel">
+              <button
+                key={"finance"}
+                className={`tab-btn ${activeTab === "finance" ? "tab-active" : ""}`}
+                onClick={() => setActiveTab("finance")}
+              >
+                {"🏦 التمويل العقاري"}
+              </button>
+
+
+
+              <button
+                key={"consult"}
+                className={`tab-btn ${activeTab === "consult" ? "tab-active" : ""}`}
+                onClick={() => setActiveTab("consult")}
+              >
+                {"📋 التسجيل والاستشارات القانونية"}
+              </button>
+
+
+            
+             
+              <button
+                className={`tab-btn ${activeTab === "reports" ? "tab-active" : ""}`}
+                // onClick={() => setActiveTab("reports")}
+              >
+                <Link to='/dashboard' className="tab-btn-reports"> {"📊 التقارير والتحليلات"}</Link>
+              </button>
+          </div>
+  
+            
+
+          <div id="tab-panel-id" className="tab-panel">
             {activeTab === "finance" && (
               <div className="tab-finance-wrap">
                 <FinanceMap />
