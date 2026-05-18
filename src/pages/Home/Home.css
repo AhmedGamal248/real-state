@@ -69,14 +69,11 @@
   object-fit: cover;
   pointer-events: none;
   z-index: 1;
-  /* will-change: transform;
-  transform: translateZ(0); */
 }
 
 .heroShadow {
   position: absolute;
   inset: 0;
-  /* backdrop-filter: blur(1px); */
   background: rgb(0 0 0 / 56%);
   z-index: 2;
 }
@@ -91,9 +88,6 @@
     radial-gradient(ellipse at 78% 18%, rgba(124, 58, 237, 0.14) 0%, transparent 45%);
 }
 
-/* .home-hero .hero-particles,
-.hero-particles { position: absolute; inset: 0; pointer-events: none; z-index: 4; } */
-
 .home-hero-content {
   position: relative;
   z-index: 5;
@@ -102,10 +96,6 @@
   max-width: 800px;
   padding: 48px 40px 42px;
   border-radius: 34px;
-  /* background: rgba(5, 16, 35, 0.72); */
-  /* box-shadow: 0 40px 120px rgba(0, 0, 0, 0.35); */
-  /* backdrop-filter: blur(20px); */
-  /* border: 1px solid rgba(255, 255, 255, 0.1); */
 }
 
 .hero-inner {
@@ -128,75 +118,16 @@
   animation: float 12s ease-in-out infinite;
 }
 
-.p1 {
-  top: 15%;
-  left: 10%;
-  animation-delay: 0s;
-  width: 8px;
-  height: 8px;
-}
-
-.p2 {
-  top: 30%;
-  right: 15%;
-  animation-delay: 1.5s;
-}
-
-.p3 {
-  top: 65%;
-  left: 20%;
-  animation-delay: 3s;
-  width: 4px;
-  height: 4px;
-}
-
-.p4 {
-  top: 75%;
-  right: 10%;
-  animation-delay: 2s;
-  width: 10px;
-  height: 10px;
-  background: rgba(99, 102, 241, 0.3);
-}
-
-.p5 {
-  top: 20%;
-  left: 40%;
-  animation-delay: 4s;
-  width: 5px;
-  height: 5px;
-}
-
-.p6 {
-  top: 55%;
-  right: 30%;
-  animation-delay: 0.8s;
-  width: 7px;
-  height: 7px;
-  background: rgba(14, 165, 233, 0.25);
-}
+.p1 { top: 15%; left: 10%; animation-delay: 0s; width: 8px; height: 8px; }
+.p2 { top: 30%; right: 15%; animation-delay: 1.5s; }
+.p3 { top: 65%; left: 20%; animation-delay: 3s; width: 4px; height: 4px; }
+.p4 { top: 75%; right: 10%; animation-delay: 2s; width: 10px; height: 10px; background: rgba(99, 102, 241, 0.3); }
+.p5 { top: 20%; left: 40%; animation-delay: 4s; width: 5px; height: 5px; }
+.p6 { top: 55%; right: 30%; animation-delay: 0.8s; width: 7px; height: 7px; background: rgba(14, 165, 233, 0.25); }
 
 @keyframes float {
-
-  0%,
-  100% {
-    transform: translateY(0px) scale(1);
-    opacity: 0.4;
-  }
-
-  50% {
-    transform: translateY(-20px) scale(1.2);
-    opacity: 0.8;
-  }
-}
-
-.hero-inner {
-  position: relative;
-  z-index: 2;
-  text-align: center;
-  color: white;
-  max-width: 860px;
-  padding: 0 30px;
+  0%, 100% { transform: translateY(0px) scale(1); opacity: 0.4; }
+  50%       { transform: translateY(-20px) scale(1.2); opacity: 0.8; }
 }
 
 .hero-badge {
@@ -211,7 +142,6 @@
   padding: 10px 22px;
   border-radius: 999px;
   margin-bottom: 28px;
-  /* backdrop-filter: blur(12px); */
 }
 
 .hero-title {
@@ -282,7 +212,6 @@
   font-family: "Tajawal", sans-serif;
   cursor: pointer;
   transition: all 0.3s ease;
-  /* backdrop-filter: blur(8px); */
 }
 
 .btn-outline:hover {
@@ -302,7 +231,6 @@
   border: 1px solid rgba(255, 255, 255, 0.14);
   border-radius: 999px;
   letter-spacing: 0.01em;
-  /* backdrop-filter: blur(10px); */
 }
 
 .hero-scroll-hint {
@@ -316,15 +244,8 @@
 }
 
 @keyframes bounce {
-
-  0%,
-  100% {
-    transform: translateX(-50%) translateY(0);
-  }
-
-  50% {
-    transform: translateX(-50%) translateY(8px);
-  }
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50%       { transform: translateX(-50%) translateY(8px); }
 }
 
 /* ══════════════════════════════════════
@@ -354,9 +275,7 @@
   transition: transform 0.3s ease;
 }
 
-.stat-card:hover {
-  transform: translateY(-4px);
-}
+.stat-card:hover { transform: translateY(-4px); }
 
 .stat-value {
   font-size: 34px;
@@ -412,9 +331,7 @@
   margin-bottom: 18px;
 }
 
-.service-icon {
-  font-size: 28px;
-}
+.service-icon { font-size: 28px; }
 
 .service-title {
   font-size: 18px;
@@ -441,9 +358,7 @@
   transition: opacity 0.2s;
 }
 
-.service-btn:hover {
-  opacity: 0.7;
-}
+.service-btn:hover { opacity: 0.7; }
 
 /* ══════════════════════════════════════
    TABS
@@ -500,9 +415,34 @@
   box-shadow: 0 4px 14px rgba(7, 79, 116, 0.35);
 }
 
+/* Standard tab panel — for consult, reports etc. */
 .tab-panel {
   padding: 30px;
   min-height: 200px;
+}
+
+/* ── Map tab panel: ZERO padding, map fills edge-to-edge ── */
+.tab-panel--map {
+  padding: 0;
+  min-height: unset;
+  overflow: hidden;
+  border-radius: 0 0 24px 24px;
+}
+
+.tab-finance-wrap {
+  display: flex;
+  flex-direction: column;
+}
+
+/*
+  Map height per breakpoint.
+  Enough height so both the sidebar and the map are usable.
+  On mobile the map itself becomes 100svh so the bottom sheet
+  has room to breathe.
+*/
+.tab-finance-wrap .finance-page {
+  height: clamp(540px, 80vh, 900px);
+  border-radius: 0 0 24px 24px;
 }
 
 .coming-soon-box {
@@ -524,42 +464,11 @@
   margin: 0 0 8px;
 }
 
-.coming-soon-box p {
-  font-size: 15px;
-  margin: 0;
-}
+.coming-soon-box p { font-size: 15px; margin: 0; }
 
 /* ══════════════════════════════════════
-   TAB INTEGRATIONS — append to Home.css
+   TAB — CONSULT
 ══════════════════════════════════════ */
-
-/* ── Finance tab CTA bar ─────────────── */
-.tab-finance-wrap {
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-}
-
-.tab-cta-bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
-  border-top: 1px solid #bae6fd;
-  padding: 18px 24px;
-  border-radius: 0 0 18px 18px;
-  flex-wrap: wrap;
-}
-
-.tab-cta-text {
-  font-size: 15px;
-  font-weight: 700;
-  color: #0369a1;
-  margin: 0;
-}
-
-/* ── Consult tab ─────────────────────── */
 .tab-consult-wrap {
   display: flex;
   flex-direction: column;
@@ -627,19 +536,6 @@
   margin: 0;
 }
 
-/* ── Responsive ──────────────────────── */
-@media (max-width: 768px) {
-  .tab-cta-bar {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 12px;
-  }
-
-  .tab-consult-cards {
-    grid-template-columns: 1fr;
-  }
-}
-
 /* ══════════════════════════════════════
    WHY US
 ══════════════════════════════════════ */
@@ -653,13 +549,8 @@
   margin: 0 auto;
 }
 
-.why-section .section-title {
-  color: white;
-}
-
-.why-section .section-desc {
-  color: rgba(255, 255, 255, 0.55);
-}
+.why-section .section-title { color: white; }
+.why-section .section-desc  { color: rgba(255, 255, 255, 0.55); }
 
 .why-grid {
   display: grid;
@@ -732,176 +623,8 @@
 }
 
 /* ══════════════════════════════════════
-   RESPONSIVE
+   CHAT WIDGET
 ══════════════════════════════════════ */
-@media (max-width: 1024px) {
-  .services-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .stats-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .why-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (max-width: 768px) {
-  .hero-title {
-    font-size: 34px;
-  }
-
-  .hero-sub {
-    font-size: 15px;
-  }
-
-  .section-title {
-    font-size: 26px;
-  }
-
-  .services-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .stats-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .why-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .tabs-bar {
-    flex-direction: column;
-  }
-
-  .hero-trust {
-    flex-direction: column;
-    gap: 10px;
-    align-items: center;
-  }
-}
-
-/* ══════════════════════════════════════
-   TAB INTEGRATIONS — append to Home.css
-══════════════════════════════════════ */
-
-/* ── Finance tab CTA bar ─────────────── */
-.tab-finance-wrap {
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-}
-
-.tab-cta-bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
-  border-top: 1px solid #bae6fd;
-  padding: 18px 24px;
-  border-radius: 0 0 18px 18px;
-  flex-wrap: wrap;
-}
-
-.tab-cta-text {
-  font-size: 15px;
-  font-weight: 700;
-  color: #0369a1;
-  margin: 0;
-}
-
-/* ── Consult tab ─────────────────────── */
-.tab-consult-wrap {
-  display: flex;
-  flex-direction: column;
-  gap: 28px;
-  padding: 8px 0;
-}
-
-.tab-consult-cards {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 14px;
-}
-
-.tab-consult-card {
-  display: flex;
-  align-items: flex-start;
-  gap: 14px;
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
-  border-radius: 14px;
-  padding: 18px;
-  transition: all 0.25s ease;
-}
-
-.tab-consult-card:hover {
-  border-color: #0ea5e9;
-  background: #f0f9ff;
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(14, 165, 233, 0.1);
-}
-
-.tab-consult-card-icon {
-  font-size: 26px;
-  flex-shrink: 0;
-  line-height: 1;
-  margin-top: 2px;
-}
-
-.tab-consult-card-title {
-  font-size: 15px;
-  font-weight: 800;
-  color: #0f172a;
-  margin: 0 0 6px;
-}
-
-.tab-consult-card-desc {
-  font-size: 13px;
-  color: #64748b;
-  line-height: 1.6;
-  margin: 0;
-}
-
-.tab-consult-cta {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
-  padding: 8px 0 4px;
-}
-
-.tab-consult-note {
-  font-size: 13px;
-  color: #64748b;
-  font-weight: 600;
-  margin: 0;
-}
-
-/* ── Responsive ──────────────────────── */
-@media (max-width: 768px) {
-  .tab-cta-bar {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 12px;
-  }
-
-  .hero-particles {
-    display: none;
-  }
-
-  .tab-consult-cards {
-    grid-template-columns: 1fr;
-  }
-}
-
-/* ═════════ CHATBOT ═════════ */
-
-/* زرار الشات */
 .chat-toggle-btn {
   position: fixed;
   bottom: 25px;
@@ -919,15 +642,9 @@
   transition: all 0.3s ease;
 }
 
-.chat-toggle-btn:hover {
-  transform: scale(1.1);
-}
+.chat-toggle-btn:hover { transform: scale(1.1); }
+.chat-toggle-btn.open  { background: #ef4444; }
 
-.chat-toggle-btn.open {
-  background: #ef4444;
-}
-
-/* نافذة الشات */
 .chat-widget {
   position: fixed;
   bottom: 100px;
@@ -951,7 +668,6 @@
   pointer-events: auto;
 }
 
-/* الهيدر */
 .chat-header {
   background: linear-gradient(135deg, #0ea5e9, #2563eb);
   color: #fff;
@@ -970,25 +686,26 @@
   cursor: pointer;
 }
 
-/* iframe */
 .chat-iframe {
   width: 100%;
   height: calc(100% - 50px);
   border: none;
 }
 
-/* موبايل */
-@media (max-width: 600px) {
-  .chat-widget {
-    width: 95%;
-    right: 2.5%;
-    height: 70vh;
-  }
+/* ══════════════════════════════════════
+   MISC
+══════════════════════════════════════ */
+.service-btn-link,
+.cta-link-btn {
+  text-decoration: none;
 }
 
-.leads-demo {
-  padding: 20px;
+.cta-link-btn,
+.service-btn-link {
+  display: inline-flex;
 }
+
+.leads-demo { padding: 20px; }
 
 .leads-grid {
   display: grid;
@@ -1000,13 +717,11 @@
   background: #fff;
   border-radius: 14px;
   padding: 16px;
-  box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
   transition: 0.3s;
 }
 
-.lead-card:hover {
-  transform: translateY(-5px);
-}
+.lead-card:hover { transform: translateY(-5px); }
 
 .lead-header {
   display: flex;
@@ -1020,9 +735,9 @@
   font-size: 12px;
 }
 
-.badge.High { background: #10b98120; color: #10b981; }
+.badge.High   { background: #10b98120; color: #10b981; }
 .badge.Medium { background: #f59e0b20; color: #f59e0b; }
-.badge.Low { background: #ef444420; color: #ef4444; }
+.badge.Low    { background: #ef444420; color: #ef4444; }
 
 .lead-footer {
   display: flex;
@@ -1038,31 +753,30 @@
   opacity: 0.7;
 }
 
-.service-btn-link,
-.cta-link-btn {
-  text-decoration: none;
-}
+/* ══════════════════════════════════════
+   RESPONSIVE
+══════════════════════════════════════ */
 
-.cta-link-btn,
-.service-btn-link {
-  display: inline-flex;
-}
-
-.tab-finance-wrap .finance-page {
-  height: clamp(460px, 76vh, 840px);
-}
-
+/* ── 1024px (tablet landscape) ── */
 @media (max-width: 1024px) {
+  .services-grid { grid-template-columns: repeat(2, 1fr); }
+  .stats-grid    { grid-template-columns: repeat(2, 1fr); }
+  .why-grid      { grid-template-columns: repeat(2, 1fr); }
+
   .home-hero-content {
     max-width: 100%;
     padding: 40px 28px 36px;
   }
 
-  .tab-panel {
-    padding: 22px;
+  .tab-panel { padding: 22px; }
+
+  /* Map: slightly shorter on tablet landscape */
+  .tab-finance-wrap .finance-page {
+    height: clamp(500px, 78vh, 800px);
   }
 }
 
+/* ── 768px (tablet portrait) ── */
 @media (max-width: 768px) {
   .hero,
   .home-hero {
@@ -1076,10 +790,23 @@
     border-radius: 24px;
   }
 
-  .hero-badge {
-    font-size: 12px;
-    padding: 8px 14px;
+  .hero-badge    { font-size: 12px; padding: 8px 14px; }
+  .hero-title    { font-size: 34px; }
+  .hero-sub      { font-size: 15px; }
+  .section-title { font-size: 26px; }
+
+  .hero-particles { display: none; }
+
+  .hero-trust {
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
   }
+
+  .services-grid { grid-template-columns: 1fr; }
+  .why-grid      { grid-template-columns: 1fr; }
+
+  .tabs-bar { flex-direction: column; }
 
   .tabs-section,
   .services-section,
@@ -1088,34 +815,45 @@
     padding-inline: 16px;
   }
 
-  .stats-section {
-    padding-inline: 16px;
-  }
+  .stats-section { padding-inline: 16px; }
 
-  .tab-panel {
-    padding: 16px;
-  }
+  .tab-panel { padding: 16px; }
+
+  /* Map panel: no padding, taller on tablet portrait */
+  .tab-panel--map { padding: 0; }
 
   .tab-finance-wrap .finance-page {
-    height: clamp(420px, 74vh, 680px);
+    height: clamp(480px, 82vh, 760px);
+    border-radius: 0 0 18px 18px;
   }
 
-  .chat-toggle-btn {
-    right: 16px;
-    bottom: 16px;
+  .tab-consult-cards { grid-template-columns: 1fr; }
+
+  .chat-toggle-btn { right: 16px; bottom: 16px; }
+  .chat-widget     { right: 16px; left: 16px; width: auto; }
+}
+
+/* ── 700px — switches to mobile bottom-sheet layout ── */
+@media (max-width: 700px) {
+  /* Map fills viewport height; bottom sheet slides over it */
+  .tab-finance-wrap .finance-page {
+    height: 100svh;
+    border-radius: 0 0 14px 14px;
   }
 
-  .chat-widget {
-    right: 16px;
-    left: 16px;
-    width: auto;
+  /* Pull the tab-panel border-radius down so map corners match */
+  .tab-panel--map {
+    border-radius: 0 0 20px 20px;
+  }
+
+  .tabs-container {
+    border-radius: 20px;
   }
 }
 
+/* ── 520px (small phones) ── */
 @media (max-width: 520px) {
-  .stats-grid {
-    grid-template-columns: 1fr;
-  }
+  .stats-grid { grid-template-columns: 1fr; }
 
   .hero-actions,
   .hero-trust {
@@ -1129,11 +867,16 @@
     justify-content: center;
   }
 
-  .service-card {
-    padding: 22px 18px;
-  }
+  .service-card { padding: 22px 18px; }
 
-  .tab-finance-wrap .finance-page {
-    height: clamp(400px, 72vh, 620px);
+  .chat-widget { height: 70vh; }
+}
+
+/* ── 600px chat ── */
+@media (max-width: 600px) {
+  .chat-widget {
+    width: 95%;
+    right: 2.5%;
+    height: 70vh;
   }
 }

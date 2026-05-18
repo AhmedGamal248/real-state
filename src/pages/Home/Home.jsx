@@ -3,11 +3,10 @@ import { Link } from "react-router-dom";
 import Footer from "../../components/Layout/Footer";
 import Navbar from "../../components/Layout/Navbar";
 import FaqSection from "../../components/FAQ/FaqSection";
-import videoBg from "../../assets/videoBg.mp4";
 import FinanceMap from "../FinanceMap/FinanceMap";
 import RequestForm from "../RequestForm/RequestForm";
 import "./Home.css";
-import hedearPhoto from "../../assets/Gemini_Generated_Image_16whiz16whiz16wh.png"
+import hedearPhoto from "../../assets/Gemini_Generated_Image_16whiz16whiz16wh.png";
 
 const services = [
   {
@@ -16,7 +15,7 @@ const services = [
     desc: "احصل على أفضل عروض التمويل من كبرى البنوك المصرية بخطوة واحدة.",
     color: "#0ea5e9",
     to: "#services-section",
-    href: "#services-section"
+    href: "#services-section",
   },
   {
     icon: "📋",
@@ -42,38 +41,13 @@ const stats = [
 ];
 
 const whyUs = [
-  {
-    icon: "🔒",
-    title: "أمان تام",
-    desc: "تشفير عالي المستوى لحماية بياناتك الشخصية والمالية.",
-  },
-  {
-    icon: "⚡",
-    title: "سرعة الإنجاز",
-    desc: "إنهاء إجراءاتك العقارية في وقت قياسي دون تعقيد.",
-  },
-  {
-    icon: "🤝",
-    title: "موثوقية عالية",
-    desc: "منصة معتمدة ومرتبطة بالجهات الرسمية المختصة.",
-  },
-  {
-    icon: "🎯",
-    title: "دقة المعلومات",
-    desc: "بيانات محدثة لحظيا من مصادر موثوقة لدعم قرارك.",
-  },
-  {
-    icon: "📱",
-    title: "سهولة الاستخدام",
-    desc: "واجهة بسيطة وسريعة تناسب جميع الأجهزة والشاشات.",
-  },
-  {
-    icon: "🌍",
-    title: "تغطية شاملة",
-    desc: "خدمات تمتد عبر المحافظات والمناطق الرئيسية داخل مصر.",
-  },
+  { icon: "🔒", title: "أمان تام", desc: "تشفير عالي المستوى لحماية بياناتك الشخصية والمالية." },
+  { icon: "⚡", title: "سرعة الإنجاز", desc: "إنهاء إجراءاتك العقارية في وقت قياسي دون تعقيد." },
+  { icon: "🤝", title: "موثوقية عالية", desc: "منصة معتمدة ومرتبطة بالجهات الرسمية المختصة." },
+  { icon: "🎯", title: "دقة المعلومات", desc: "بيانات محدثة لحظيا من مصادر موثوقة لدعم قرارك." },
+  { icon: "📱", title: "سهولة الاستخدام", desc: "واجهة بسيطة وسريعة تناسب جميع الأجهزة والشاشات." },
+  { icon: "🌍", title: "تغطية شاملة", desc: "خدمات تمتد عبر المحافظات والمناطق الرئيسية داخل مصر." },
 ];
-
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState("finance");
@@ -85,15 +59,9 @@ export default function Home() {
     <div className="home-page" dir="rtl">
       <Navbar />
 
+      {/* ── Hero ── */}
       <section className="hero home-hero" dir="rtl">
-        {/* <video autoPlay muted loop playsInline className="bg-video">
-          <source src={videoBg} type="video/mp4" />
-        </video> */}
-        <img
-            src={hedearPhoto}
-            alt="EDGE PRO logo"
-            className="bg-video"
-          />
+        <img src={hedearPhoto} alt="EDGE PRO logo" className="bg-video" />
         <div className="heroShadow" />
         <div className="hero-overlay" />
         <div className="hero-particles">
@@ -118,21 +86,13 @@ export default function Home() {
           <div className="hero-actions">
             <button
               className="btn-primary"
-              onClick={() =>
-                document
-                  .getElementById("services-section")
-                  ?.scrollIntoView({ behavior: "smooth" })
-              }
+              onClick={() => document.getElementById("services-section")?.scrollIntoView({ behavior: "smooth" })}
             >
               ابدأ الآن
             </button>
             <button
               className="btn-outline"
-              onClick={() =>
-                document
-                  .getElementById("tabs-section")
-                  ?.scrollIntoView({ behavior: "smooth" })
-              }
+              onClick={() => document.getElementById("tabs-section")?.scrollIntoView({ behavior: "smooth" })}
             >
               استكشف الخدمات
             </button>
@@ -150,6 +110,7 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ── Stats ── */}
       <section className="stats-section">
         <div className="stats-grid">
           {stats.map((item) => (
@@ -161,6 +122,7 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ── Services ── */}
       <section className="services-section" id="services-section">
         <div className="section-header">
           <span className="section-tag">خدماتنا</span>
@@ -194,6 +156,7 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ── Tabs ── */}
       <section className="tabs-section" id="tabs-section">
         <div className="section-header">
           <span className="section-tag">الخدمات التفاعلية</span>
@@ -202,57 +165,47 @@ export default function Home() {
 
         <div className="tabs-container">
           <div className="tabs-bar">
+            <button
+              className={`tab-btn ${activeTab === "finance" ? "tab-active" : ""}`}
+              onClick={() => setActiveTab("finance")}
+            >
+              🏦 التمويل العقاري
+            </button>
 
-              <button
-                key={"finance"}
-                className={`tab-btn ${activeTab === "finance" ? "tab-active" : ""}`}
-                onClick={() => setActiveTab("finance")}
-              >
-                {"🏦 التمويل العقاري"}
-              </button>
+            <button
+              className={`tab-btn ${activeTab === "consult" ? "tab-active" : ""}`}
+              onClick={() => setActiveTab("consult")}
+            >
+              📋 التسجيل والاستشارات القانونية
+            </button>
 
-
-
-              <button
-                key={"consult"}
-                className={`tab-btn ${activeTab === "consult" ? "tab-active" : ""}`}
-                onClick={() => setActiveTab("consult")}
-              >
-                {"📋 التسجيل والاستشارات القانونية"}
-              </button>
-
-
-            
-             
-              <button
-                className={`tab-btn ${activeTab === "reports" ? "tab-active" : ""}`}
-                // onClick={() => setActiveTab("reports")}
-              >
-                <Link to='/dashboard' className="tab-btn-reports"> {"📊 التقارير والتحليلات"}</Link>
-              </button>
+            <button className="tab-btn">
+              <Link to="/dashboard" className="tab-btn-reports">
+                📊 التقارير والتحليلات
+              </Link>
+            </button>
           </div>
-  
-            
 
-          <div id="tab-panel-id" className="tab-panel">
-            {activeTab === "finance" && (
+          {/* ── Finance tab: map fills the panel, zero padding ── */}
+          {activeTab === "finance" && (
+            <div className="tab-panel tab-panel--map">
               <div className="tab-finance-wrap">
                 <FinanceMap />
               </div>
-            )}
+            </div>
+          )}
 
-            {activeTab === "consult" && (
+          {/* ── Consult tab ── */}
+          {activeTab === "consult" && (
+            <div className="tab-panel">
               <div className="tab-consult-wrap">
                 <div className="tab-consult-cards">
                   <div className="tab-consult-card">
                     <span className="tab-consult-card-icon">⚖️</span>
                     <div>
-                      <h4 className="tab-consult-card-title">
-                        استشارة قانونية عقارية
-                      </h4>
+                      <h4 className="tab-consult-card-title">استشارة قانونية عقارية</h4>
                       <p className="tab-consult-card-desc">
-                        تواصل مع محامين معتمدين لحل النزاعات العقارية ومراجعة
-                        المستندات.
+                        تواصل مع محامين معتمدين لحل النزاعات العقارية ومراجعة المستندات.
                       </p>
                     </div>
                   </div>
@@ -260,9 +213,7 @@ export default function Home() {
                   <div className="tab-consult-card">
                     <span className="tab-consult-card-icon">📋</span>
                     <div>
-                      <h4 className="tab-consult-card-title">
-                        تسجيل عقاري رسمي
-                      </h4>
+                      <h4 className="tab-consult-card-title">تسجيل عقاري رسمي</h4>
                       <p className="tab-consult-card-desc">
                         إجراءات التسجيل في الشهر العقاري بمساندة خبراء معتمدين.
                       </p>
@@ -282,9 +233,7 @@ export default function Home() {
                   <div className="tab-consult-card">
                     <span className="tab-consult-card-icon">🎁</span>
                     <div>
-                      <h4 className="tab-consult-card-title">
-                        استشارة أولية مجانية
-                      </h4>
+                      <h4 className="tab-consult-card-title">استشارة أولية مجانية</h4>
                       <p className="tab-consult-card-desc">
                         ابدأ بدون رسوم مبدئية واحصل على توجيه واضح قبل الإجراء.
                       </p>
@@ -307,19 +256,8 @@ export default function Home() {
                   </p>
                 </div>
               </div>
-            )}
-
-            {activeTab === "reports" && (
-              <div className="coming-soon-box">
-                <span className="coming-icon">📊</span>
-                <h3>لوحة التقارير</h3>
-                <p>
-                  نجهز واجهة تحليلات أوضح لعرض المؤشرات والمقارنات في الإصدار
-                  القادم.
-                </p>
-              </div>
-            )}
-          </div>
+            </div>
+          )}
         </div>
       </section>
 
@@ -333,6 +271,7 @@ export default function Home() {
         />
       )}
 
+      {/* ── Why us ── */}
       <section className="why-section">
         <div className="why-inner">
           <div className="section-header">
@@ -358,6 +297,7 @@ export default function Home() {
 
       <FaqSection />
 
+      {/* ── CTA ── */}
       <section className="cta-section">
         <div className="cta-inner">
           <h2 className="cta-title">جاهز للبدء؟</h2>
@@ -370,6 +310,7 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ── Chat widget ── */}
       <>
         <button
           className={`chat-toggle-btn ${chatOpen ? "open" : ""}`}
@@ -383,7 +324,6 @@ export default function Home() {
             <span>المساعد الذكي</span>
             <button onClick={() => setChatOpen(false)}>✕</button>
           </div>
-
           <iframe
             src="https://chat-put-2che.vercel.app/"
             title="chatbot"
