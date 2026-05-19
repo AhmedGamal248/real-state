@@ -28,7 +28,7 @@
   border-radius: 24px;
   width: 100%;
   max-width: 780px;
-  max-height: 92vh;
+  max-height: 79vh;
   display: flex;
   flex-direction: column;
   box-shadow: 0 40px 100px rgba(0, 0, 0, 0.4);
@@ -732,7 +732,7 @@
 /* ── Responsive ──────────────────────── */
 @media (max-width: 640px) {
   .rf-modal {
-    max-height: 98vh;
+    max-height: 78vh;
     border-radius: 16px;
   }
 

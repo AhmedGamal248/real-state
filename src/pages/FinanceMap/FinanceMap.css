@@ -207,7 +207,6 @@
 
 /* Range panel — stays absolute inside sidebar */
 .fm-sidebar-body .filter-pill-popup.range-panel {
-  position: fixed;
   left: var(--sidebar-w);
   top: 50%;
   transform: translateY(-50%);
@@ -265,7 +264,7 @@
 ══════════════════════════════════════════ */
 .fm-mobile-layout {
   position: relative;
-  height: 100%;
+  height: 80%;
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -422,9 +421,12 @@
 }
 
 .fm-sheet-content .fpg-controls {
-  display: flex;
-  gap: 5px;
-  width: 100%;
+    display: flex;
+    gap: 5px;
+    width: 100%;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: stretch;
 }
 
 .fm-sheet-content .fp-select-wrap { flex: 1; min-width: 0; }
@@ -482,10 +484,10 @@
 /* Range panel on mobile: full width centered above sheet */
 .fm-sheet-content .filter-pill-popup.range-panel {
   position: fixed;
-  left: 50%;
+  left: var(--sidebar-w);
   bottom: calc(72px + 8px);
-  transform: translateX(-50%);
   width: calc(100vw - 24px);
+  max-width: 420px;
   top: auto;
   z-index: 9999;
 }
@@ -844,7 +846,20 @@
 .rp-actions { display: flex; gap: 8px; }
 .rp-btn-cancel { flex: 1; padding: 8px; border-radius: var(--radius-sm); border: 1px solid var(--border); background: transparent; color: var(--text-muted); font-size: 12px; font-weight: 700; font-family: "Tajawal", sans-serif; cursor: pointer; transition: var(--transition); }
 .rp-btn-cancel:hover { background: rgba(255,255,255,0.05); color: var(--text-primary); }
-.rp-btn-apply { flex: 1; padding: 8px; border-radius: var(--radius-sm); border: none; background: var(--sky); color: #fff; font-size: 12px; font-weight: 700; font-family: "Tajawal", sans-serif; cursor: pointer; transition: var(--transition); }
+.rp-btn-apply {
+    flex: 1;
+    padding: 8px;
+    border-radius: var(--radius-sm);
+    border: none;
+    background: transparent;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 700;
+    font-family: "Tajawal", sans-serif;
+    cursor: pointer;
+    transition: var(--transition);
+    border: 1px solid var(--border);
+   }
 .rp-btn-apply:hover:not(:disabled) { background: #38bdf8; }
 .rp-btn-apply:disabled { opacity: 0.4; cursor: not-allowed; }
 
@@ -949,24 +964,136 @@
 .hamburger { position: relative; z-index: 100000; }
 
 /* ══════════════════════════════════════════
-   Fullscreen
+   Fullscreen Portal Overlay
+   Portalled into the Leaflet map container
+   so it stays inside the fullscreen layer.
 ══════════════════════════════════════════ */
-:fullscreen .fm-sidebar,
-:-webkit-full-screen .fm-sidebar,
-:-moz-full-screen .fm-sidebar {
-  z-index: 9999;
+
+/* The container Leaflet puts fullscreen is position:relative by default;
+   we need it to be a stacking context */
+:fullscreen,
+:-webkit-full-screen,
+:-moz-full-screen {
+  position: relative !important;
 }
 
-:fullscreen .results-popup,
-:-webkit-full-screen .results-popup,
-:-moz-full-screen .results-popup {
-  z-index: 9999;
+/* Main overlay wrapper — sits on top of the fullscreen map */
+.fs-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none; /* let map clicks through by default */
+  z-index: 9000;
+  font-family: "Tajawal", sans-serif;
+  direction: rtl;
 }
 
+/* ── Desktop fullscreen sidebar ── */
+.fs-sidebar {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: var(--sidebar-w, 300px);
+  background: var(--bg-panel);
+  border-left: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  pointer-events: all;
+  z-index: 9001;
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.fs-sidebar--closed {
+  width: 0;
+  border-left: none;
+}
+
+.fs-sidebar-header {
+  padding: 16px 14px 12px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+/* ── Sidebar toggle tab (fullscreen) ── */
+.fs-sidebar-toggle {
+  position: absolute;
+  top: 50%;
+  right: var(--sidebar-w, 300px);
+  transform: translateY(-50%);
+  z-index: 9002;
+  width: 20px;
+  height: 56px;
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-right: none;
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--sky-light);
+  pointer-events: all;
+  transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1), background 0.2s;
+}
+
+.fs-sidebar--closed ~ .fs-sidebar-toggle {
+  right: 0;
+}
+
+.fs-sidebar-toggle:hover { background: rgba(14, 165, 233, 0.12); }
+
+/* ── Results popup inside fullscreen ── */
+.fs-results-popup {
+  position: absolute;
+  bottom: 20px;
+  left: calc(var(--sidebar-w, 300px) + 20px);
+  right: auto;
+  width: 340px;
+  max-height: 48vh;
+  z-index: 9001;
+  background: rgba(5, 16, 32, 0.96);
+  border: 1px solid rgba(14, 165, 233, 0.2);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  pointer-events: all;
+}
+
+/* ── Mobile fullscreen bottom sheet ── */
+.fs-overlay--mobile {
+  pointer-events: none;
+}
+
+.fs-sheet {
+  pointer-events: all;
+}
+
+/* Fullscreen general */
 :fullscreen .finance-page,
 :-webkit-full-screen .finance-page {
   height: 100vh;
   border-radius: 0;
+}
+
+/* Make sure range panels appear above everything inside fullscreen */
+:fullscreen .filter-pill-popup,
+:-webkit-full-screen .filter-pill-popup {
+  z-index: 99999 !important;
+}
+
+/* sidebar body range-panel positioning inside fullscreen */
+.fs-sidebar .fm-sidebar-body .filter-pill-popup.range-panel {
+  right: var(--sidebar-w, 300px);
+  left: auto;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 99999;
+  width: 280px;
 }
 
 /* ══════════════════════════════════════════
@@ -1005,5 +1132,9 @@ img.leaflet-marker-icon.leaflet-zoom-animated.leaflet-interactive:hover {
     bottom: 10px;
     width: auto;
     max-height: 42vh;
+  }
+
+  .tab-panel--map{
+    height: 80vh;
   }
 }

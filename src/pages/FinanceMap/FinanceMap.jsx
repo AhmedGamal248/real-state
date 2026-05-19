@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import { createPortal } from "react-dom";
 import {
   MapContainer,
   TileLayer,
@@ -188,6 +189,26 @@ export default function FinanceMap() {
     return () => window.removeEventListener("resize", handler);
   }, []);
 
+  // ── Track fullscreen state ──
+  // Leaflet calls requestFullscreen() on its own map container element,
+  // leaving the sidebar/sheet outside the fullscreen DOM.
+  // We use a React Portal to inject the filters INSIDE that container.
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [fsContainer, setFsContainer] = useState(null);
+  const [fsSidebarOpen, setFsSidebarOpen] = useState(true);
+  const [fsSheetSnap, setFsSheetSnap] = useState("collapsed");
+
+  useEffect(() => {
+    const onChange = () => {
+      const el = document.fullscreenElement;
+      setIsFullscreen(!!el);
+      setFsContainer(el || null);
+      if (!el) { setFsSidebarOpen(true); setFsSheetSnap("collapsed"); }
+    };
+    document.addEventListener("fullscreenchange", onChange);
+    return () => document.removeEventListener("fullscreenchange", onChange);
+  }, []);
+
   // Price filter state
   const PRICE_MIN = Math.min(...properties.map((p) => p.price));
   const PRICE_MAX = Math.max(...properties.map((p) => p.price));
@@ -346,28 +367,71 @@ export default function FinanceMap() {
   const applyAreaFilter = () => { setAreaFilterActive(true); setHasFiltered(true); setShowAreaPanel(false); };
   const resetAreaFilter = () => { setAreaMin(AREA_MIN); setAreaMax(AREA_MAX); setAreaFilterActive(false); };
 
-  const makeDragHandler = (handle, setMin, setMax, minVal, maxVal, globalMin, globalMax, trackRef, step = 10000) => (e) => {
+ const makeDragHandler =
+  (
+    handle,
+    setMin,
+    setMax,
+    minVal,
+    maxVal,
+    globalMin,
+    globalMax,
+    trackRef,
+    step = 10000
+  ) =>
+  (e) => {
+
     e.preventDefault();
-    const onMove = (ev) => {
-      const track = trackRef.current;
-      if (!track) return;
-      const clientX = ev.clientX ?? ev.touches?.[0]?.clientX;
-      const { left, width } = track.getBoundingClientRect();
-      const ratio = Math.min(1, Math.max(0, (clientX - left) / width));
-      const value = Math.round((globalMin + ratio * (globalMax - globalMin)) / step) * step;
-      if (handle === "min") setMin(Math.min(value, maxVal - step));
-      else setMax(Math.max(value, minVal + step));
+    e.stopPropagation();
+
+    const track = trackRef.current;
+
+    if (!track) return;
+
+    const rect = track.getBoundingClientRect();
+
+    const move = (clientX) => {
+
+      const ratio = Math.min(
+        1,
+        Math.max(0, (clientX - rect.left) / rect.width)
+      );
+
+      const value =
+        Math.round(
+          (globalMin + ratio * (globalMax - globalMin)) / step
+        ) * step;
+
+      if (handle === "min") {
+        setMin(Math.min(value, maxVal - step));
+      } else {
+        setMax(Math.max(value, minVal + step));
+      }
     };
-    const onUp = () => {
-      document.removeEventListener("mousemove", onMove);
-      document.removeEventListener("mouseup", onUp);
-      document.removeEventListener("touchmove", onMove);
-      document.removeEventListener("touchend", onUp);
+
+    const onMouseMove = (ev) => {
+      move(ev.clientX);
     };
-    document.addEventListener("mousemove", onMove);
-    document.addEventListener("mouseup", onUp);
-    document.addEventListener("touchmove", onMove, { passive: false });
-    document.addEventListener("touchend", onUp);
+
+    const onTouchMove = (ev) => {
+      move(ev.touches[0].clientX);
+    };
+
+    const cleanup = () => {
+      document.removeEventListener("mousemove", onMouseMove);
+      document.removeEventListener("mouseup", cleanup);
+      document.removeEventListener("touchmove", onTouchMove);
+      document.removeEventListener("touchend", cleanup);
+    };
+
+    document.addEventListener("mousemove", onMouseMove);
+    document.addEventListener("mouseup", cleanup);
+
+    document.addEventListener("touchmove", onTouchMove, {
+      passive: false,
+    });
+
+    document.addEventListener("touchend", cleanup);
   };
 
   const startPriceDrag = (h) => makeDragHandler(h, setPriceMin, setPriceMax, priceMin, priceMax, PRICE_MIN, PRICE_MAX, sliderTrackRef, 50000);
@@ -408,64 +472,169 @@ export default function FinanceMap() {
   };
 
   // ── RangePanel component ──
-  const RangePanel = ({ title, icon, histogram, histMax, globalMin, globalMax, curMin, curMax, setCurMin, setCurMax, startMinDrag, startMaxDrag, trackRef, minPct, maxPct, onApply, onCancel, step = 50000, formatVal = (v) => v.toLocaleString("ar-EG"), unitLabel = "جنيه", previewMsg }) => {
-    const count = previewMsg;
-    return (
-      <div className="filter-pill-popup range-panel">
-        <div className="rp-header">
-          <span className="rp-icon">{icon}</span>
-          <span className="rp-title">{title}</span>
-        </div>
-        <div className="rp-histogram">
-          {histogram.map((c, i) => {
-            const lo = globalMin + i * ((globalMax - globalMin) / histogram.length);
-            const hi = lo + (globalMax - globalMin) / histogram.length;
-            const inRange = lo < curMax && hi > curMin;
-            return (
-              <div key={i} className="rp-hist-col">
-                <div className={`rp-hist-bar${inRange ? " active" : ""}`} style={{ height: `${Math.max(8, (c / histMax) * 100)}%` }} />
-              </div>
-            );
-          })}
-        </div>
-        <div className="rp-slider-wrap">
-          <div className="rp-track" ref={trackRef}>
-            <div className="rp-fill" style={{ left: `${minPct}%`, width: `${maxPct - minPct}%` }} />
-            <div className="rp-thumb rp-thumb-min" style={{ left: `${minPct}%` }} onMouseDown={startMinDrag} onTouchStart={startMinDrag}>
-              <div className="rp-bubble">{formatVal(curMin)}</div>
-            </div>
-            <div className="rp-thumb rp-thumb-max" style={{ left: `${maxPct}%` }} onMouseDown={startMaxDrag} onTouchStart={startMaxDrag}>
-              <div className="rp-bubble">{formatVal(curMax)}</div>
-            </div>
-          </div>
-        </div>
-        <div className="rp-inputs">
-          <div className="rp-input-block">
-            <label className="rp-input-label">الحد الأدنى</label>
-            <div className="rp-input-field">
-              <input type="number" value={curMin} step={step} min={globalMin} max={curMax - step} onChange={(e) => setCurMin(Math.min(+e.target.value, curMax - step))} />
-              <span className="rp-input-unit">{unitLabel}</span>
-            </div>
-          </div>
-          <div className="rp-input-sep"><div className="rp-sep-line" /></div>
-          <div className="rp-input-block">
-            <label className="rp-input-label">الحد الأقصى</label>
-            <div className="rp-input-field">
-              <input type="number" value={curMax} step={step} min={curMin + step} max={globalMax} onChange={(e) => setCurMax(Math.max(+e.target.value, curMin + step))} />
-              <span className="rp-input-unit">{unitLabel}</span>
-            </div>
-          </div>
-        </div>
-        <div className={`rp-preview ${count > 0 ? "found" : "empty"}`}>
-          {count > 0 ? <><span className="rp-dot green" /> {count} عقار متاح في هذا النطاق</> : <><span className="rp-dot amber" /> لا يوجد عقارات في هذا النطاق</>}
-        </div>
-        <div className="rp-actions">
-          <button className="rp-btn-cancel" onClick={onCancel}>إلغاء</button>
-          <button className="rp-btn-apply" onClick={onApply} disabled={count === 0}>تطبيق</button>
-        </div>
-      </div>
-    );
+  const RangePanel = ({
+  title,
+  icon,
+  globalMin,
+  globalMax,
+  curMin,
+  curMax,
+  setCurMin,
+  setCurMax,
+  startMinDrag,
+  startMaxDrag,
+  trackRef,
+  minPct,
+  maxPct,
+  onApply,
+  onCancel,
+  step = 50000,
+  formatVal = (v) => v.toLocaleString("ar-EG"),
+  unitLabel = "جنيه",
+  previewMsg,
+}) => {
+
+  // local input states
+  const [minInput, setMinInput] = useState(curMin);
+  const [maxInput, setMaxInput] = useState(curMax);
+
+  useEffect(() => {
+    setMinInput(curMin);
+  }, [curMin]);
+
+  useEffect(() => {
+    setMaxInput(curMax);
+  }, [curMax]);
+
+  const handleMinBlur = () => {
+    let value = Number(minInput);
+
+    if (isNaN(value)) value = globalMin;
+
+    value = Math.max(globalMin, value);
+    value = Math.min(value, curMax - step);
+
+    setCurMin(value);
+    setMinInput(value);
   };
+
+  const handleMaxBlur = () => {
+    let value = Number(maxInput);
+
+    if (isNaN(value)) value = globalMax;
+
+    value = Math.min(globalMax, value);
+    value = Math.max(value, curMin + step);
+
+    setCurMax(value);
+    setMaxInput(value);
+  };
+
+  return (
+    <div
+      className="filter-pill-popup range-panel"
+      onMouseDown={(e) => e.stopPropagation()}
+      onClick={(e) => e.stopPropagation()}
+    >
+
+      {/* header */}
+      <div className="rp-header">
+        <span className="rp-icon">{icon}</span>
+        <span className="rp-title">{title}</span>
+      </div>
+
+  
+
+      {/* inputs */}
+      <div className="rp-inputs">
+
+        {/* min */}
+        <div className="rp-input-block">
+          <label className="rp-input-label">
+            الحد الأدنى
+          </label>
+
+          <div className="rp-input-field">
+            <input
+              type="number"
+              value={minInput}
+              step={step}
+              onChange={(e) => setMinInput(e.target.value)}
+              onBlur={handleMinBlur}
+            />
+
+            <span className="rp-input-unit">
+              {unitLabel}
+            </span>
+          </div>
+        </div>
+
+        <div className="rp-input-sep">
+          <div className="rp-sep-line" />
+        </div>
+
+        {/* max */}
+        <div className="rp-input-block">
+          <label className="rp-input-label">
+            الحد الأقصى
+          </label>
+
+          <div className="rp-input-field">
+            <input
+              type="number"
+              value={maxInput}
+              step={step}
+              onChange={(e) => setMaxInput(e.target.value)}
+              onBlur={handleMaxBlur}
+            />
+
+            <span className="rp-input-unit">
+              {unitLabel}
+            </span>
+          </div>
+        </div>
+
+      </div>
+
+      {/* preview */}
+      <div className={`rp-preview ${previewMsg > 0 ? "found" : "empty"}`}>
+        {previewMsg > 0 ? (
+          <>
+            <span className="rp-dot green" />
+            {previewMsg} عقار متاح
+          </>
+        ) : (
+          <>
+            <span className="rp-dot amber" />
+            لا يوجد عقارات
+          </>
+        )}
+      </div>
+
+      {/* actions */}
+      <div className="rp-actions">
+
+        <button
+          type="button"
+          className="rp-btn-cancel"
+          onClick={onCancel}
+        >
+          إلغاء
+        </button>
+
+        <button
+          type="button"
+          className="rp-btn-apply"
+          onClick={onApply}
+          disabled={previewMsg === 0}
+        >
+          تطبيق
+        </button>
+
+      </div>
+    </div>
+  );
+};
 
   // ── Shared filter body (used in both sidebar and bottom sheet) ──
   const FiltersBody = () => (
@@ -513,7 +682,7 @@ export default function FinanceMap() {
       <div className="filter-pill-group" style={{ position: "relative" }}>
         <span className="fpg-label">💰 السعر</span>
         <div className="fpg-controls">
-          <button className={`fp-pill-btn${priceFilterActive ? " fp-pill-active" : ""}${showPricePanel ? " fp-pill-open" : ""}`} onClick={() => { setShowPricePanel((v) => !v); setShowAreaPanel(false); }}>
+          <button  type="button" className={`fp-pill-btn${priceFilterActive ? " fp-pill-active" : ""}${showPricePanel ? " fp-pill-open" : ""}`} onClick={() => { setShowPricePanel((v) => !v); setShowAreaPanel(false); }}>
             <span className="fp-pill-icon">💰</span>
             <span className="fp-pill-label">{priceFilterActive ? `${(priceMin / 1000000).toFixed(1)}م — ${(priceMax / 1000000).toFixed(1)}م` : "نطاق السعر"}</span>
             {priceFilterActive ? (
@@ -534,7 +703,7 @@ export default function FinanceMap() {
       <div className="filter-pill-group" style={{ position: "relative" }}>
         <span className="fpg-label">📐 المساحة</span>
         <div className="fpg-controls">
-          <button className={`fp-pill-btn${areaFilterActive ? " fp-pill-active fp-pill-area" : ""}${showAreaPanel ? " fp-pill-open" : ""}`} onClick={() => { setShowAreaPanel((v) => !v); setShowPricePanel(false); }}>
+          <button  type="button" className={`fp-pill-btn${areaFilterActive ? " fp-pill-active fp-pill-area" : ""}${showAreaPanel ? " fp-pill-open" : ""}`} onClick={() => { setShowAreaPanel((v) => !v); setShowPricePanel(false); }}>
             <span className="fp-pill-icon">📐</span>
             <span className="fp-pill-label">{areaFilterActive ? `${areaMin} — ${areaMax} م²` : "نطاق المساحة"}</span>
             {areaFilterActive ? (
@@ -555,11 +724,11 @@ export default function FinanceMap() {
       <div className="filter-pill-group">
         <span className="fpg-label">🧭 جغرافي</span>
         <div className="fpg-controls">
-          <button className={`fp-pill-btn fp-geo-btn${userLocation ? " fp-pill-active" : ""}`} onClick={handleUserLocationZoom}>
+          <button  type="button" className={`fp-pill-btn fp-geo-btn${userLocation ? " fp-pill-active" : ""}`} onClick={handleUserLocationZoom}>
             <span className="fp-pill-icon">🧭</span>
             <span className="fp-pill-label">موقعي</span>
           </button>
-          <button className={`fp-pill-btn fp-geo-btn${drawMode ? " fp-pill-draw" : ""}`} onClick={handleDrawBtnClick} title={drawBtnText} aria-label={drawBtnText}>
+          <button  type="button" className={`fp-pill-btn fp-geo-btn${drawMode ? " fp-pill-draw" : ""}`} onClick={handleDrawBtnClick} title={drawBtnText} aria-label={drawBtnText}>
             <span className="fp-pill-icon">{drawMode ? "❌" : "🟦"}</span>
             <span className="fp-pill-label">{drawMode ? "إلغاء" : "استعلام"}</span>
           </button>
@@ -569,7 +738,7 @@ export default function FinanceMap() {
       <div className="filter-sep" />
 
       {/* مسح الكل */}
-      <button className="fp-reset-btn" onClick={handleResetAll}>
+      <button  type="button" className="fp-reset-btn" onClick={handleResetAll}>
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
           <path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6" />
         </svg>
@@ -617,6 +786,7 @@ export default function FinanceMap() {
 
           {/* ── Sidebar toggle tab ── */}
           <button
+           type="button"
             className="fm-sidebar-toggle"
             onClick={() => setSidebarOpen((v) => !v)}
             aria-label={sidebarOpen ? "إخفاء الفلاتر" : "عرض الفلاتر"}
@@ -653,7 +823,7 @@ export default function FinanceMap() {
                             <td>{isNearby && <span className="nearby-badge">📍قريب</span>}{p.name}</td>
                             <td className="price">{p.price.toLocaleString("ar-EG")}جنيه</td>
                             <td className="area">{p.area ? `${p.area} م²` : "غير محددة"}</td>
-                            <td><button className="zoomBtn" onClick={() => setSelected(p)}>عرض</button></td>
+                            <td><button  type="button" className="zoomBtn" onClick={() => setSelected(p)}>عرض</button></td>
                           </tr>
                         );
                       })}
@@ -664,7 +834,7 @@ export default function FinanceMap() {
             )}
 
             {/* Map */}
-            <MapContainer center={[30.0444, 31.2357]} zoom={10} className="map-container">
+            <MapContainer center={[30.0444, 31.2357]} zoom={7} className="map-container">
               <MapController setMapInstance={setMapInstance} />
               <FullscreenControl />
               <LayersControl position="topright">
@@ -789,6 +959,146 @@ export default function FinanceMap() {
       {selectedProperty && (
         <PropertyCard property={selectedProperty} onClose={() => setSelectedProperty(null)} />
       )}
+
+      {/* ══════════════════════════════════════════
+          FULLSCREEN PORTAL
+          When Leaflet enters fullscreen it moves its map container
+          into the top-level fullscreen layer. We portal a complete
+          filter UI into that container so it stays visible.
+      ══════════════════════════════════════════ */}
+      {isFullscreen && fsContainer &&
+        createPortal(
+          <div className={`fs-overlay${window.innerWidth <= 700 ? " fs-overlay--mobile" : ""}`} dir="rtl">
+
+            {/* ── DESKTOP fullscreen: sidebar ── */}
+            {window.innerWidth > 700 && (
+              <>
+                <div className={`fs-sidebar${fsSidebarOpen ? " fs-sidebar--open" : " fs-sidebar--closed"}`}>
+                  <div className="fs-sidebar-header">
+                    <div className="fs-sidebar-heading">
+                      <span className="filters-kicker">لوحة البحث الذكية</span>
+                      <strong className="filters-title">اختيار أسرع للعقار المناسب</strong>
+                      <p className="filters-summary">{locationSummary}</p>
+                    </div>
+                    <div className="fm-sidebar-chips">
+                      <div className="filters-status-chip">
+                        <span className="filters-status-value">{displayedResultsCount}</span>
+                        <span className="filters-status-label">نتيجة</span>
+                      </div>
+                      <div className="filters-status-chip">
+                        <span className="filters-status-value">{activeFiltersCount}</span>
+                        <span className="filters-status-label">فلتر</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="fm-sidebar-body">
+                    <FiltersBody />
+                  </div>
+                </div>
+
+                {/* Toggle tab */}
+                <button
+                 type="button"
+                  className="fs-sidebar-toggle"
+                  onClick={() => setFsSidebarOpen((v) => !v)}
+                  aria-label={fsSidebarOpen ? "إخفاء الفلاتر" : "عرض الفلاتر"}
+                >
+                  <svg viewBox="0 0 10 16" fill="none" width="10" height="16">
+                    <path d={fsSidebarOpen ? "M7 1L2 8l5 7" : "M3 1l5 7-5 7"} stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </button>
+
+                {/* Results popup */}
+                {(allDisplayed.length > 0 || (drawMode && polygonDrawn)) && (
+                  <div className="fs-results-popup">
+                    <div className="popup-drag-handle" style={{ cursor: "default" }}>
+                      <span className="drag-dots">⠿</span>
+                      <h3 className="popup-title" style={{ margin: 0 }}>
+                        {allDisplayed.length > 0 ? `نتائج البحث (${allDisplayed.length})` : "نتائج البحث"}
+                        {nearbyProperties.length > 0 && <span className="nearby-badge" style={{ marginRight: 8, fontSize: 11 }}>{nearbyProperties.length} قريب منك</span>}
+                      </h3>
+                      <span className="drag-dots">⠿</span>
+                    </div>
+                    {allDisplayed.length === 0 ? (
+                      <div className="no-results"><span>🏠</span><p>لا يوجد عقارات في هذه المنطقة</p></div>
+                    ) : (
+                      <table className="results-table">
+                        <thead><tr><th>المنطقة</th><th>السعر</th><th>المساحة</th><th></th></tr></thead>
+                        <tbody>
+                          {allDisplayed.map((p) => {
+                            const isNearby = nearbyProperties.some((n) => n.id === p.id);
+                            return (
+                              <tr key={p.id} style={isNearby ? { background: "rgba(16,185,129,0.07)" } : {}}>
+                                <td>{isNearby && <span className="nearby-badge">📍قريب</span>}{p.name}</td>
+                                <td className="price">{p.price.toLocaleString("ar-EG")}جنيه</td>
+                                <td className="area">{p.area ? `${p.area} م²` : "غير محددة"}</td>
+                                <td><button  type="button" className="zoomBtn" onClick={() => setSelected(p)}>عرض</button></td>
+                              </tr>
+                            );
+                          })}
+                        </tbody>
+                      </table>
+                    )}
+                  </div>
+                )}
+              </>
+            )}
+
+            {/* ── MOBILE fullscreen: bottom sheet ── */}
+            {window.innerWidth <= 700 && (
+              <div
+                className={`fm-sheet fm-sheet--${fsSheetSnap} fs-sheet`}
+                onTouchStart={(e) => { sheetStartY.current = e.touches[0].clientY; }}
+                onTouchEnd={(e) => {
+                  if (sheetStartY.current === null) return;
+                  const delta = e.changedTouches[0].clientY - sheetStartY.current;
+                  if (delta < -40) setFsSheetSnap("expanded");
+                  else if (delta > 40) setFsSheetSnap("collapsed");
+                  sheetStartY.current = null;
+                }}
+              >
+                <div className="fm-sheet-handle-area" onClick={() => setFsSheetSnap((s) => s === "collapsed" ? "expanded" : "collapsed")}>
+                  <div className="fm-sheet-handle" />
+                  <div className="fm-sheet-summary">
+                    <div className="fm-sheet-summary-left">
+                      <span className="fm-sheet-title">الفلاتر</span>
+                      {activeFiltersCount > 0 && <span className="fm-sheet-badge">{activeFiltersCount} نشط</span>}
+                    </div>
+                    <div className="fm-sheet-chips">
+                      <span className="fm-sheet-chip">{displayedResultsCount} نتيجة</span>
+                      <span className="fm-sheet-chevron">{fsSheetSnap === "expanded" ? "↓" : "↑"}</span>
+                    </div>
+                  </div>
+                </div>
+                <div className="fm-sheet-content">
+                  <FiltersBody />
+                </div>
+                {fsSheetSnap === "expanded" && allDisplayed.length > 0 && (
+                  <div className="fm-sheet-results">
+                    <div className="fm-sheet-results-title">نتائج البحث ({allDisplayed.length})</div>
+                    <div className="fm-sheet-results-list">
+                      {allDisplayed.map((p) => {
+                        const isNearby = nearbyProperties.some((n) => n.id === p.id);
+                        return (
+                          <div key={p.id} className={`fm-result-row${isNearby ? " fm-result-nearby" : ""}`} onClick={() => { setSelected(p); setFsSheetSnap("collapsed"); }}>
+                            <div className="fm-result-info">
+                              {isNearby && <span className="nearby-badge">📍قريب</span>}
+                              <span className="fm-result-name">{p.name}</span>
+                              <span className="fm-result-area">{p.area ? `${p.area} م²` : ""}</span>
+                            </div>
+                            <span className="fm-result-price">{p.price.toLocaleString("ar-EG")} جنيه</span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>,
+          fsContainer
+        )
+      }
     </div>
   );
 }
