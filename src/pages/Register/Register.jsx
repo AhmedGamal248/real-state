@@ -1,6 +1,33 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { setAuthenticated } from "../../utils/auth";
+import { saveUser, findUserByUsername, findUserByEmail } from "../../utils/localStorage";
 import "./Register.css";
+
+// ─── Validation Functions ─────────────────────────────────────────────────────
+function validateEmail(email) {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+}
+
+function validateNationalId(id) {
+  // Egyptian National ID should be 14 digits (relaxed for demo)
+  if (!id) return false;
+  const idRegex = /^[0-9]{10,14}$/;
+  return idRegex.test(id);
+}
+
+function validatePhone(phone) {
+  // Egyptian phone numbers (relaxed for demo)
+  if (!phone) return false;
+  const phoneRegex = /^01[0-9]{9}$/;
+  return phoneRegex.test(phone);
+}
+
+function validatePassword(password) {
+  // At least 4 characters (relaxed for demo)
+  return password && password.length >= 4;
+}
 
 // ─── Field config per account type ───────────────────────────────────────────
 
@@ -294,7 +321,7 @@ function StepDots({ step }) {
   );
 }
 
-function FieldInput({ field, value, onChange }) {
+function FieldInput({ field, value, onChange, error }) {
   if (field.type === "select") {
     return (
       <div className="input-group">
@@ -311,6 +338,7 @@ function FieldInput({ field, value, onChange }) {
             </option>
           ))}
         </select>
+        {error && <span className="error-message">{error}</span>}
       </div>
     );
   }
@@ -324,11 +352,12 @@ function FieldInput({ field, value, onChange }) {
         value={value || ""}
         onChange={(e) => onChange(field.id, e.target.value)}
       />
+      {error && <span className="error-message">{error}</span>}
     </div>
   );
 }
 
-function FieldsSection({ sections, formData, onChange }) {
+function FieldsSection({ sections, formData, onChange, errors }) {
   return (
     <>
       {Object.entries(sections).map(([key, section], si) => (
@@ -343,6 +372,7 @@ function FieldsSection({ sections, formData, onChange }) {
                   field={row[0]}
                   value={formData[row[0].id]}
                   onChange={onChange}
+                  error={errors?.[row[0].id]}
                 />
               );
             }
@@ -354,6 +384,7 @@ function FieldsSection({ sections, formData, onChange }) {
                     field={field}
                     value={formData[field.id]}
                     onChange={onChange}
+                    error={errors?.[field.id]}
                   />
                 ))}
               </div>
@@ -371,6 +402,7 @@ export default function Register() {
   const [step, setStep] = useState(1);
   const [selectedType, setSelectedType] = useState(null);
   const [formData, setFormData] = useState({});
+  const [errors, setErrors] = useState({});
   const vantaRef = useRef(null);
   const effectRef = useRef(null);
   const navigate = useNavigate();
@@ -400,12 +432,14 @@ export default function Register() {
   //   navigate("/");
   // };
   const handleFieldChange = (id, value) => {
+    console.log("Field changed:", id, value);
     setFormData((prev) => ({ ...prev, [id]: value }));
   };
 
   const handleTypeSelect = (type) => {
     setSelectedType(type);
     setFormData({});
+    setErrors({});
   };
 
   const handleNext = () => {
@@ -418,8 +452,220 @@ export default function Register() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Add your validation logic here
-    setStep(3);
+    console.log("Form submitted", { selectedType, formData, errors });
+
+    const newErrors = {};
+
+    // Normalize selectedType to handle both with and without ألف
+    const normalizedType = selectedType === "افراد" ? "أفراد" : selectedType;
+
+    // Validation based on account type
+    if (normalizedType === "أفراد") {
+      const { firstName, lastName, nationalId, phone, email, username, password, confirmPassword } = formData;
+
+      console.log("Validating individual form:", { firstName, lastName, nationalId, phone, email, username, password, confirmPassword });
+
+      if (!firstName) newErrors.firstName = "يرجى إدخال الاسم الأول";
+      if (!lastName) newErrors.lastName = "يرجى إدخال الاسم الأخير";
+      if (!nationalId) {
+        newErrors.nationalId = "يرجى إدخال الرقم القومي";
+      } else if (!validateNationalId(nationalId)) {
+        newErrors.nationalId = "الرقم القومي يجب أن يكون 10-14 رقم";
+      }
+      if (!phone) {
+        newErrors.phone = "يرجى إدخال رقم الهاتف";
+      } else if (!validatePhone(phone)) {
+        newErrors.phone = "رقم الهاتف يجب أن يبدأ بـ 01 ويتكون من 11 رقم";
+      }
+      if (!email) {
+        newErrors.email = "يرجى إدخال البريد الإلكتروني";
+      } else if (!validateEmail(email)) {
+        newErrors.email = "البريد الإلكتروني غير صحيح";
+      }
+      if (!username) newErrors.username = "يرجى إدخال اسم المستخدم";
+      if (!password) {
+        newErrors.password = "يرجى إدخال كلمة المرور";
+      } else if (!validatePassword(password)) {
+        newErrors.password = "كلمة المرور يجب أن تكون 4 أحرف على الأقل";
+      }
+      if (!confirmPassword) {
+        newErrors.confirmPassword = "يرجى تأكيد كلمة المرور";
+      } else if (password !== confirmPassword) {
+        newErrors.confirmPassword = "كلمة المرور غير متطابقة";
+      }
+
+      if (Object.keys(newErrors).length > 0) {
+        console.log("Validation errors:", newErrors);
+        setErrors(newErrors);
+        return;
+      }
+
+      // Check if username already exists
+      if (findUserByUsername(username)) {
+        newErrors.username = "اسم المستخدم موجود بالفعل";
+        setErrors(newErrors);
+        return;
+      }
+
+      // Check if email already exists
+      if (findUserByEmail(email)) {
+        newErrors.email = "البريد الإلكتروني مستخدم بالفعل";
+        setErrors(newErrors);
+        return;
+      }
+
+      // Save user
+      const user = {
+        id: Date.now().toString(),
+        type: "أفراد",
+        firstName,
+        lastName,
+        nationalId,
+        phone,
+        email,
+        username,
+        password,
+        createdAt: new Date().toISOString(),
+      };
+
+      saveUser(user);
+      setAuthenticated(user);
+      setStep(3);
+
+    } else if (normalizedType === "شركات") {
+      const { companyName, commercialReg, taxNumber, activity, companyPhone, companyEmail, managerName, jobTitle, password, confirmPassword } = formData;
+
+      if (!companyName) newErrors.companyName = "يرجى إدخال اسم الشركة";
+      if (!commercialReg) newErrors.commercialReg = "يرجى إدخال السجل التجاري";
+      if (!taxNumber) newErrors.taxNumber = "يرجى إدخال الرقم الضريبي";
+      if (!activity) newErrors.activity = "يرجى اختيار نشاط الشركة";
+      if (!companyPhone) {
+        newErrors.companyPhone = "يرجى إدخال هاتف الشركة";
+      } else if (!validatePhone(companyPhone)) {
+        newErrors.companyPhone = "رقم الهاتف يجب أن يبدأ بـ 01 ويتكون من 11 رقم";
+      }
+      if (!companyEmail) {
+        newErrors.companyEmail = "يرجى إدخال البريد الرسمي";
+      } else if (!validateEmail(companyEmail)) {
+        newErrors.companyEmail = "البريد الإلكتروني غير صحيح";
+      }
+      if (!managerName) newErrors.managerName = "يرجى إدخال اسم المسؤول";
+      if (!jobTitle) newErrors.jobTitle = "يرجى إدخال المسمى الوظيفي";
+      if (!password) {
+        newErrors.password = "يرجى إدخال كلمة المرور";
+      } else if (!validatePassword(password)) {
+        newErrors.password = "كلمة المرور يجب أن تكون 4 أحرف على الأقل";
+      }
+      if (!confirmPassword) {
+        newErrors.confirmPassword = "يرجى تأكيد كلمة المرور";
+      } else if (password !== confirmPassword) {
+        newErrors.confirmPassword = "كلمة المرور غير متطابقة";
+      }
+
+      if (Object.keys(newErrors).length > 0) {
+        console.log("Validation errors:", newErrors);
+        setErrors(newErrors);
+        return;
+      }
+
+      // Use company name as username
+      const username = companyName;
+
+      // Check if username already exists
+      if (findUserByUsername(username)) {
+        newErrors.companyName = "اسم الشركة موجود بالفعل";
+        setErrors(newErrors);
+        return;
+      }
+
+      // Save user
+      const user = {
+        id: Date.now().toString(),
+        type: "شركات",
+        companyName,
+        commercialReg,
+        taxNumber,
+        activity,
+        companyPhone,
+        companyEmail,
+        managerName,
+        jobTitle,
+        username,
+        password,
+        createdAt: new Date().toISOString(),
+      };
+
+      saveUser(user);
+      setAuthenticated(user);
+      setStep(3);
+
+    } else if (normalizedType === "بنوك") {
+      const { bankName, bankCode, bankType, cbeNumber, bankPhone, bankEmail, managerName, role, password, confirmPassword } = formData;
+
+      if (!bankName) newErrors.bankName = "يرجى إدخال اسم البنك";
+      if (!bankCode) newErrors.bankCode = "يرجى إدخال كود البنك";
+      if (!bankType) newErrors.bankType = "يرجى اختيار نوع البنك";
+      if (!cbeNumber) newErrors.cbeNumber = "يرجى إدخال رقم ترخيص البنك المركزي";
+      if (!bankPhone) {
+        newErrors.bankPhone = "يرجى إدخال هاتف البنك";
+      } else if (!validatePhone(bankPhone)) {
+        newErrors.bankPhone = "رقم الهاتف يجب أن يبدأ بـ 01 ويتكون من 11 رقم";
+      }
+      if (!bankEmail) {
+        newErrors.bankEmail = "يرجى إدخال البريد الرسمي";
+      } else if (!validateEmail(bankEmail)) {
+        newErrors.bankEmail = "البريد الإلكتروني غير صحيح";
+      }
+      if (!managerName) newErrors.managerName = "يرجى إدخال اسم المسؤول";
+      if (!role) newErrors.role = "يرجى اختيار الصلاحية";
+      if (!password) {
+        newErrors.password = "يرجى إدخال كلمة المرور";
+      } else if (!validatePassword(password)) {
+        newErrors.password = "كلمة المرور يجب أن تكون 4 أحرف على الأقل";
+      }
+      if (!confirmPassword) {
+        newErrors.confirmPassword = "يرجى تأكيد كلمة المرور";
+      } else if (password !== confirmPassword) {
+        newErrors.confirmPassword = "كلمة المرور غير متطابقة";
+      }
+
+      if (Object.keys(newErrors).length > 0) {
+        console.log("Validation errors:", newErrors);
+        setErrors(newErrors);
+        return;
+      }
+
+      // Use bank name as username
+      const username = bankName;
+
+      // Check if username already exists
+      if (findUserByUsername(username)) {
+        newErrors.bankName = "اسم البنك موجود بالفعل";
+        setErrors(newErrors);
+        return;
+      }
+
+      // Save user
+      const user = {
+        id: Date.now().toString(),
+        type: "بنوك",
+        bankName,
+        bankCode,
+        bankType,
+        cbeNumber,
+        bankPhone,
+        bankEmail,
+        managerName,
+        role,
+        username,
+        password,
+        createdAt: new Date().toISOString(),
+      };
+
+      saveUser(user);
+      setAuthenticated(user);
+      setStep(3);
+    }
   };
 
   const handleBackToType = () => {
@@ -488,6 +734,7 @@ export default function Register() {
                     sections={config.fields}
                     formData={formData}
                     onChange={handleFieldChange}
+                    errors={errors}
                   />
                 </div>
 

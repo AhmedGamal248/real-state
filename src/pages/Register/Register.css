@@ -192,6 +192,14 @@
     color: #fff;
 }
 
+.error-message {
+    display: block;
+    margin-top: 5px;
+    font-size: 12px;
+    color: #f87171;
+    font-weight: 500;
+}
+
 /* Grid layout for 2-column fields */
 .fields-row {
     display: grid;

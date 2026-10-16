@@ -3,10 +3,10 @@ import Sidebar from './Sidebar.jsx';
 import DashboardHome from './DashboardHome.jsx';
 import './Dashboard.css';
 import {
-  initialUnits,
-  initialMortgageRequests,
-  initialClients,
-} from './mockData.js';
+  getUnits,
+  getMortgageRequests,
+  getClients,
+} from '../../utils/localStorage';
 import Map from './Map.jsx';
 import Leads from './Leads.jsx';
 import Mortgage from './Mortgage.jsx';   // ✅ was imported but missing before
@@ -23,8 +23,17 @@ const PAGE_LABELS = {
 
 export default function Dashbord() {
   const [activePage, setActivePage] = useState('dashboard');
-  const [units] = useState(initialUnits);
+  const [units, setUnits] = useState([]);
+  const [mortgageRequests, setMortgageRequests] = useState([]);
+  const [clients, setClients] = useState([]);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  // Load data from localStorage on mount
+  useEffect(() => {
+    setUnits(getUnits());
+    setMortgageRequests(getMortgageRequests());
+    setClients(getClients());
+  }, []);
 
   useEffect(() => {
     if (typeof window.matchMedia !== 'function') return undefined;
@@ -80,8 +89,8 @@ export default function Dashbord() {
         return (
           <DashboardHome
             units={units}
-            mortgageRequests={initialMortgageRequests}
-            clients={initialClients}
+            mortgageRequests={mortgageRequests}
+            clients={clients}
             onAddUnit={handleOpenAddUnit}
           />
         );
@@ -139,12 +148,12 @@ export default function Dashbord() {
 
       case 'leads':
         return (
-          <Leads clients={initialClients} />   // ✅ now passes clients as prop
+          <Leads clients={clients} />   // ✅ now passes clients as prop
         );
 
       case 'mortgage':
         return (
-          <Mortgage mortgageRequests={initialMortgageRequests} />  // ✅ was empty before
+          <Mortgage mortgageRequests={mortgageRequests} />  // ✅ was empty before
         );
 
       case 'map':
@@ -168,7 +177,7 @@ export default function Dashbord() {
         <header className="mobile-topbar">
           <div className="mobile-topbar-copy">
             <div className="mobile-topbar-brand">
-              عقار<span>تك</span>
+              Geo<span>Aqar</span>
             </div>
             <div className="mobile-topbar-page">
               {PAGE_LABELS[activePage] ?? 'لوحة التحكم'}

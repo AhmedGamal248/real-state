@@ -2,7 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import edgeProLogo from "../../assets/edge_prologo.png";
 import bankMarkzyLogo from "../../assets/bank_markzy.png";
-import { setAuthenticated } from "../../utils/auth";
+import { setAuthenticated, clearAuthenticated } from "../../utils/auth";
+import { authenticateUser } from "../../utils/localStorage";
 import "./Login.css";
 
 export default function Login() {
@@ -43,8 +44,13 @@ export default function Login() {
       return;
     }
 
-    setAuthenticated(true);
-    navigate("/");
+    const user = authenticateUser(username, password);
+    if (user) {
+      setAuthenticated(user);
+      navigate("/");
+    } else {
+      alert("اسم المستخدم أو كلمة المرور غير صحيحة");
+    }
   };
 
   return (

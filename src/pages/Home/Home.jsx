@@ -40,15 +40,6 @@ const stats = [
   { value: "24/7", label: "دعم فني متواصل" },
 ];
 
-const whyUs = [
-  { icon: "🔒", title: "أمان تام", desc: "تشفير عالي المستوى لحماية بياناتك الشخصية والمالية." },
-  { icon: "⚡", title: "سرعة الإنجاز", desc: "إنهاء إجراءاتك العقارية في وقت قياسي دون تعقيد." },
-  { icon: "🤝", title: "موثوقية عالية", desc: "منصة معتمدة ومرتبطة بالجهات الرسمية المختصة." },
-  { icon: "🎯", title: "دقة المعلومات", desc: "بيانات محدثة لحظيا من مصادر موثوقة لدعم قرارك." },
-  { icon: "📱", title: "سهولة الاستخدام", desc: "واجهة بسيطة وسريعة تناسب جميع الأجهزة والشاشات." },
-  { icon: "🌍", title: "تغطية شاملة", desc: "خدمات تمتد عبر المحافظات والمناطق الرئيسية داخل مصر." },
-];
-
 export default function Home() {
   const [activeTab, setActiveTab] = useState("finance");
   const [showForm, setShowForm] = useState(false);
@@ -271,29 +262,6 @@ export default function Home() {
         />
       )}
 
-      {/* ── Why us ── */}
-      <section className="why-section">
-        <div className="why-inner">
-          <div className="section-header">
-            <span className="section-tag">لماذا نحن</span>
-            <h2 className="section-title">ثق بنا لأننا نستحق ثقتك</h2>
-            <p className="section-desc">
-              بنينا هذه المنصة بمعايير عملية واضحة لتخدم المستخدم بسرعة ووضوح
-              على كل جهاز.
-            </p>
-          </div>
-
-          <div className="why-grid">
-            {whyUs.map((item) => (
-              <div className="why-card" key={item.title}>
-                <span className="why-icon">{item.icon}</span>
-                <h4 className="why-title">{item.title}</h4>
-                <p className="why-desc">{item.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
 
       <FaqSection />
 

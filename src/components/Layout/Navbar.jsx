@@ -1,21 +1,23 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import profilePersonGirl from "../../assets/profile_person_girl.png";
-import { clearAuthenticated, isAuthenticated } from "../../utils/auth";
+import { clearAuthenticated, isAuthenticated, getCurrentUser } from "../../utils/auth";
 import "./Navbar.css";
 import edgeProLogo from "../../assets/edge_prologo.png";
 
 const NAV_ITEMS = [
   { label: "الرئيسية", to: "/" },
+  { label: "صفحة الطلبات", to: "/BankEmployeePage" },
   { label: "الخدمات", href: "#services-section" },
   { label: "لوحة التحكم", to: "/dashboard" },
   { label: "الأسئلة الشائعة", href: "#faq" },
-  { label: "تواصل معنا",to: "/contactus" },
+  { label: "تواصل معنا", to: "/contactus" },
 ];
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [loggedIn, setLoggedIn] = useState(() => isAuthenticated());
+  const [currentUser, setCurrentUser] = useState(() => getCurrentUser());
   const [scrolled, setScrolled] = useState(false);
   const navigate = useNavigate();
   const panelRef = useRef(null);
@@ -23,7 +25,10 @@ export default function Navbar() {
 
   /* ── Auth sync ─────────────────────────────────────────── */
   useEffect(() => {
-    const syncAuth = () => setLoggedIn(isAuthenticated());
+    const syncAuth = () => {
+      setLoggedIn(isAuthenticated());
+      setCurrentUser(getCurrentUser());
+    };
     syncAuth();
     window.addEventListener("authchange", syncAuth);
     window.addEventListener("storage", syncAuth);
@@ -72,6 +77,7 @@ export default function Navbar() {
   const handleLogout = () => {
     clearAuthenticated();
     setLoggedIn(false);
+    setCurrentUser(null);
     close();
     navigate("/login");
   };
@@ -80,18 +86,17 @@ export default function Navbar() {
     <header className={`navbar${scrolled ? " navbar--scrolled" : ""}`} dir="rtl">
       {/* ── Brand ─────────────────────────────────────────── */}
       <Link
-  className="brand"
-  to="/"
-  aria-label="Real Estate Platform"
-  onClick={close}
->
-  <img
-    src={edgeProLogo}
-    alt="EDGE PRO logo"
-    className="nav-logo-img"
-  />
-
-</Link>
+        className="brand"
+        to="/"
+        aria-label="Real Estate Platform"
+        onClick={close}
+      >
+        <img
+          src={edgeProLogo}
+          alt="EDGE PRO logo"
+          className="nav-logo-img"
+        />
+      </Link>
 
       {/* ── Desktop nav links (center) ─────────────────────── */}
       <nav className="nav-links" aria-label="Main navigation">
@@ -117,7 +122,17 @@ export default function Navbar() {
         <div className="user-chip">
           <img className="user-avatar" src={profilePersonGirl} alt="" aria-hidden="true" />
           <div className="user-info">
-            <span className="user-name">{loggedIn ? "Asmaa" : "Guest"}</span>
+            <span className="user-name">
+              {loggedIn && currentUser
+                ? currentUser.type === "أفراد"
+                  ? currentUser.firstName || currentUser.username
+                  : currentUser.type === "شركات"
+                  ? currentUser.companyName || currentUser.username
+                  : currentUser.type === "بنوك"
+                  ? currentUser.bankName || currentUser.username
+                  : currentUser.username
+                : "Guest"}
+            </span>
             <span className="user-role">
               {loggedIn ? "Ready to manage" : "Browse freely"}
             </span>
@@ -126,15 +141,25 @@ export default function Navbar() {
 
         {loggedIn ? (
           <>
-            <Link className="btn btn-ghost" to="/dashboard">Dashboard</Link>
-            <button type="button" className="btn btn-danger" onClick={handleLogout}>
+            <Link className="btn btn-ghost" to="/dashboard">
+              Dashboard
+            </Link>
+            <button
+              type="button"
+              className="btn btn-danger"
+              onClick={handleLogout}
+            >
               Logout
             </button>
           </>
         ) : (
           <>
-            <Link className="btn btn-ghost" to="/login">Login</Link>
-            <Link className="btn btn-primary" to="/register">Register</Link>
+            <Link className="btn btn-ghost" to="/login">
+              Login
+            </Link>
+            <Link className="btn btn-primary" to="/register">
+              Register
+            </Link>
           </>
         )}
       </div>
@@ -165,7 +190,17 @@ export default function Navbar() {
         <div className="mobile-user">
           <img className="user-avatar" src={profilePersonGirl} alt="" aria-hidden="true" />
           <div className="user-info">
-            <span className="user-name">{loggedIn ? "Asmaa" : "Guest"}</span>
+            <span className="user-name">
+              {loggedIn && currentUser
+                ? currentUser.type === "أفراد"
+                  ? currentUser.firstName || currentUser.username
+                  : currentUser.type === "شركات"
+                  ? currentUser.companyName || currentUser.username
+                  : currentUser.type === "بنوك"
+                  ? currentUser.bankName || currentUser.username
+                  : currentUser.username
+                : "Guest"}
+            </span>
             <span className="user-role">
               {loggedIn ? "Ready to manage properties" : "Browse services quickly"}
             </span>
@@ -180,14 +215,21 @@ export default function Navbar() {
             item.to ? (
               <NavLink
                 key={item.label}
-                className={({ isActive }) => `mobile-link${isActive ? " is-active" : ""}`}
+                className={({ isActive }) =>
+                  `mobile-link${isActive ? " is-active" : ""}`
+                }
                 to={item.to}
                 onClick={close}
               >
                 {item.label}
               </NavLink>
             ) : (
-              <a key={item.label} className="mobile-link" href={item.href} onClick={close}>
+              <a
+                key={item.label}
+                className="mobile-link"
+                href={item.href}
+                onClick={close}
+              >
                 {item.label}
               </a>
             )
@@ -200,17 +242,37 @@ export default function Navbar() {
         <div className="mobile-auth">
           {loggedIn ? (
             <>
-              <Link className="btn btn-ghost btn-full" to="/dashboard" onClick={close}>
+              <Link
+                className="btn btn-ghost btn-full"
+                to="/dashboard"
+                onClick={close}
+              >
                 Dashboard
               </Link>
-              <button type="button" className="btn btn-danger btn-full" onClick={handleLogout}>
+              <button
+                type="button"
+                className="btn btn-danger btn-full"
+                onClick={handleLogout}
+              >
                 Logout
               </button>
             </>
           ) : (
             <>
-              <Link className="btn btn-ghost btn-full" to="/login" onClick={close}>Login</Link>
-              <Link className="btn btn-primary btn-full" to="/register" onClick={close}>Register</Link>
+              <Link
+                className="btn btn-ghost btn-full"
+                to="/login"
+                onClick={close}
+              >
+                Login
+              </Link>
+              <Link
+                className="btn btn-primary btn-full"
+                to="/register"
+                onClick={close}
+              >
+                Register
+              </Link>
             </>
           )}
         </div>

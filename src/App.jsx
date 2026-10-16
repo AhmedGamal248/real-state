@@ -4,6 +4,8 @@ import Register from "./pages/Register/Register";
 import Home from "./pages/Home/Home.jsx";
 import Dashbord from "./pages/dashboard/Dashbord.jsx";
 import Contactus from "./pages/Contactus/Contactus.jsx";
+import ProtectedRoute from "./components/Auth/ProtectedRoute.jsx";
+import BankEmployeePage from "./pages/BankEmployeePage/BankEmployeePage.jsx";
 
 function App() {
   return (
@@ -12,11 +14,25 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/contactus" element={<Contactus />} />
-        <Route path="/dashboard" element={<Dashbord />} />
+        <Route
+          path="/BankEmployeePage"
+          element={
+            <ProtectedRoute>
+              <BankEmployeePage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <Dashbord />
+            </ProtectedRoute>
+          }
+        />
         <Route path="/register" element={<Register />} />
       </Routes>
     </BrowserRouter>
   );
 }
 export default App;
-
