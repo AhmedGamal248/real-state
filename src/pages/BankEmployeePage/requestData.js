@@ -2,17 +2,17 @@ export const DOC_LABELS = [
   {
     title: "شهادة مفردات مرتب معتمدة",
     filename: "شهادة_مفردات_مرتب_861.pdf",
-    path: "/pdfs/back.pdf",
+    path: `${import.meta.env.BASE_URL}pdfs/sample_salary.pdf`,
   },
   {
     title: "كشف حساب بنكي (آخر 6 أشهر)",
     filename: "كشف_حساب_بنكي_أكتوبر_2026.pdf",
-    path: "/pdfs/bank_statement.pdf",
+    path: `${import.meta.env.BASE_URL}pdfs/bank_statement.pdf`,
   },
   {
     title: "صورة بطاقة الهوية / الرقم القومي",
     filename: "بطاقة_الهوية_28905150101234.pdf",
-    path: "/pdfs/id_card.pdf",
+    path: `${import.meta.env.BASE_URL}pdfs/id_card.pdf`,
   },
 ];
 
