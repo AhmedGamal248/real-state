@@ -55,8 +55,7 @@
 
 .page button:focus-visible,
 .page input:focus-visible,
-.page select:focus-visible,
-.row:focus-visible {
+.page select:focus-visible {
   outline: 2px solid var(--blue);
   outline-offset: 2px;
 }
@@ -247,11 +246,44 @@ select.control {
   align-items: start;
 }
 
+.listLayout,
+.detailLayout {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.hidden {
+  display: none;
+}
+
 .sideCol {
   display: flex;
   flex-direction: column;
   gap: 16px;
   min-width: 0;
+}
+
+.backButton {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 12px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: #fff;
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.backButton:hover {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+}
+
+.backButton svg {
+  transform: rotate(90deg);
 }
 
 /* ---------------- List ---------------- */
@@ -332,7 +364,6 @@ select.control {
 }
 
 .row {
-  cursor: pointer;
   transition: background 0.15s;
 }
 
@@ -399,6 +430,13 @@ select.control {
   background: #f1f5f9;
   border: 1px solid var(--line);
   color: #475569;
+  cursor: pointer;
+}
+
+.openBtn:hover {
+  background: var(--blue-soft);
+  border-color: var(--blue-line);
+  color: var(--blue);
 }
 
 .listFoot {
@@ -621,6 +659,22 @@ select.control {
   min-width: 0;
   font-size: 11px;
   font-weight: 700;
+}
+
+.docInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.docFilename {
+  font-size: 10px;
+  color: var(--muted);
+  font-weight: 500;
+  direction: ltr;
+  unicode-bidi: isolate;
 }
 
 .previewBtn {
@@ -940,6 +994,116 @@ select.control {
 
 .toastError {
   background: var(--red);
+}
+
+/* ---------------- Success Popup ---------------- */
+
+.successPopup {
+  position: fixed;
+  inset: 0;
+  z-index: 3000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.successContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  padding: 40px 50px;
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  animation: slideUp 0.4s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(30px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.checkmarkWrapper {
+  width: 80px;
+  height: 80px;
+}
+
+.checkmark {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  display: block;
+  stroke-width: 2;
+  stroke: #fff;
+  stroke-miterlimit: 10;
+  animation: fill 0.4s ease-in-out 0.4s forwards,
+    scale 0.3s ease-in-out 0.9s both;
+}
+
+.checkmarkCircle {
+  stroke: var(--green);
+  stroke-dasharray: 166;
+  stroke-dashoffset: 166;
+  stroke-width: 2;
+  fill: none;
+  animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+}
+
+.checkmarkCheck {
+  transform-origin: 50% 50%;
+  stroke-dasharray: 48;
+  stroke-dashoffset: 48;
+  animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
+}
+
+@keyframes stroke {
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes scale {
+  0%,
+  100% {
+    transform: none;
+  }
+  50% {
+    transform: scale3d(1.1, 1.1, 1);
+  }
+}
+
+@keyframes fill {
+  100% {
+    box-shadow: inset 0px 0px 0px 40px var(--green);
+  }
+}
+
+.successMessage {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+  text-align: center;
+  line-height: 1.6;
 }
 
 /* ---------------- Responsive ---------------- */

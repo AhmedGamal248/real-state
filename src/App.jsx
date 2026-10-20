@@ -6,6 +6,8 @@ import Dashbord from "./pages/dashboard/Dashbord.jsx";
 import Contactus from "./pages/Contactus/Contactus.jsx";
 import ProtectedRoute from "./components/Auth/ProtectedRoute.jsx";
 import BankEmployeePage from "./pages/BankEmployeePage/BankEmployeePage.jsx";
+import BankEmployeeRequestPage from "./pages/BankEmployeePage/BankEmployeeRequestPage.jsx";
+import ReviewerPage from "./pages/Reviewerpage/Reviewerpage.jsx";
 
 function App() {
   return (
@@ -19,6 +21,22 @@ function App() {
           element={
             <ProtectedRoute>
               <BankEmployeePage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/BankEmployeePage/:requestId"
+          element={
+            <ProtectedRoute>
+              <BankEmployeeRequestPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/Reviewerpage"
+          element={
+            <ProtectedRoute>
+              <ReviewerPage />
             </ProtectedRoute>
           }
         />

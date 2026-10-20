@@ -8,6 +8,7 @@ import edgeProLogo from "../../assets/edge_prologo.png";
 const NAV_ITEMS = [
   { label: "الرئيسية", to: "/" },
   { label: "صفحة الطلبات", to: "/BankEmployeePage" },
+  { label: "صفحة المراجع", to: "/Reviewerpage" },
   { label: "الخدمات", href: "#services-section" },
   { label: "لوحة التحكم", to: "/dashboard" },
   { label: "الأسئلة الشائعة", href: "#faq" },
