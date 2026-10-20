@@ -93,8 +93,8 @@ const APPLICANTS = [
     governorate: 'القاهرة',
     address: 'القاهرة - حلوان',
     docs: [
-      { id: 'a1', icon: 'file', tone: 'green', title: 'مفردات مرتب', meta: 'PDF • 1.4 MB • معتمد' },
-      { id: 'a2', icon: 'idcard', tone: 'blue', title: 'صورة بطاقة الرقم القومي', meta: 'سارية حتى 2029 (الوجهين)' },
+      { id: 'a1', icon: 'file', tone: 'green', title: 'مفردات مرتب', meta: 'PDF • 1.4 MB • معتمد', url: `${import.meta.env.BASE_URL}pdfs/sample_salary.pdf` },
+      { id: 'a2', icon: 'idcard', tone: 'blue', title: 'صورة بطاقة الرقم القومي', meta: 'سارية حتى 2029 (الوجهين)', url: `${import.meta.env.BASE_URL}pdfs/id_card.pdf` },
     ],
   },
   {
@@ -108,8 +108,8 @@ const APPLICANTS = [
     governorate: 'القاهرة',
     address: 'القاهرة - المعادي',
     docs: [
-      { id: 'b1', icon: 'file', tone: 'green', title: 'مفردات مرتب', meta: 'PDF • 1.1 MB • معتمد' },
-      { id: 'b2', icon: 'idcard', tone: 'blue', title: 'صورة بطاقة الرقم القومي', meta: 'سارية حتى 2028 (الوجهين)' },
+      { id: 'b1', icon: 'file', tone: 'green', title: 'مفردات مرتب', meta: 'PDF • 1.1 MB • معتمد', url: `${import.meta.env.BASE_URL}pdfs/sample_salary.pdf` },
+      { id: 'b2', icon: 'idcard', tone: 'blue', title: 'صورة بطاقة الرقم القومي', meta: 'سارية حتى 2028 (الوجهين)', url: `${import.meta.env.BASE_URL}pdfs/id_card.pdf` },
     ],
   },
 ];
